@@ -1,0 +1,351 @@
+.container {
+  display: grid;
+  grid-template-columns: 1.1fr 1.9fr;
+  gap: 2rem;
+  height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+/* Schedule Left Panel */
+.schedulePanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.filterSection {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filterBtn {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterBtnActive {
+  background: var(--accent-gold);
+  border-color: var(--accent-gold);
+  color: #000B1A;
+}
+
+.calendarScroll {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.calendarScroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.dateCard {
+  flex: 0 0 70px;
+  padding: 0.5rem 0.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dateCardActive {
+  background: linear-gradient(135deg, var(--accent-gold), rgba(212,175,55,0.7));
+  border-color: var(--accent-gold);
+  color: #000B1A;
+}
+
+.dateDay {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.dateNum {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-top: 0.1rem;
+}
+
+/* Match Cards list */
+.matchList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.matchCard {
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.matchCardActive {
+  border-color: var(--accent-gold);
+  background: rgba(212, 175, 55, 0.04);
+}
+
+.matchCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.matchTeamsRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.matchTeamLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.teamNameGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.teamScore {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+}
+
+/* Match Details Center Panel */
+.detailsPanel {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 2rem;
+  height: 100%;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.detailsHeader {
+  text-align: center;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 1.5rem;
+}
+
+.detailsStage {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  letter-spacing: 0.1em;
+}
+
+.detailsStadium {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+.scoreboardLarge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.largeTeam {
+  width: 38%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.largeFlag {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.largeTeamName {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.largeScoreArea {
+  width: 24%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.largeScore {
+  font-family: 'Outfit', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.largeLiveMinutes {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--accent-red);
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+}
+
+/* Statistics Board */
+.statsSectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.statRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.statLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.statBarContainer {
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  display: flex;
+  overflow: hidden;
+}
+
+.statBarLeft {
+  height: 100%;
+  background: var(--accent-gold);
+  border-radius: 4px 0 0 4px;
+}
+
+.statBarRight {
+  height: 100%;
+  background: var(--accent-blue);
+  border-radius: 0 4px 4px 0;
+  margin-left: auto;
+}
+
+/* Timeline updates list */
+.timelineList {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-top: 1rem;
+}
+
+.timelineList::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 2px;
+  background: var(--glass-border);
+}
+
+.timelineNode {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.timelineMarker {
+  position: absolute;
+  left: -20px;
+  top: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 2px solid var(--accent-gold);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timelineMarkerGoal {
+  border-color: var(--accent-green);
+  background: var(--accent-green);
+}
+
+.timelineMarkerCard {
+  border-color: var(--accent-red);
+  background: var(--accent-red);
+}
+
+.timelineDetails {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.timelineMinute {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--accent-gold);
+  min-width: 30px;
+}
+
+.timelineText {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}

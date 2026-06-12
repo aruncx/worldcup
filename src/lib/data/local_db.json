@@ -1,0 +1,50 @@
+{
+  "predictions": [],
+  "tournamentPredictions": [],
+  "followedTeams": [],
+  "followedPlayers": [],
+  "leaderboard": [
+    {
+      "username": "PunditPro",
+      "predictionsCount": 12,
+      "points": 34,
+      "rank": 1
+    },
+    {
+      "username": "SofascoreWizard",
+      "predictionsCount": 12,
+      "points": 30,
+      "rank": 2
+    },
+    {
+      "username": "OptaJunior",
+      "predictionsCount": 11,
+      "points": 28,
+      "rank": 3
+    },
+    {
+      "username": "FIFA_Master99",
+      "predictionsCount": 12,
+      "points": 25,
+      "rank": 4
+    },
+    {
+      "username": "GoalGetta",
+      "predictionsCount": 10,
+      "points": 22,
+      "rank": 5
+    },
+    {
+      "username": "TacticalGuru",
+      "predictionsCount": 9,
+      "points": 19,
+      "rank": 6
+    },
+    {
+      "username": "WorldCupFanatic",
+      "predictionsCount": 10,
+      "points": 15,
+      "rank": 7
+    }
+  ]
+}

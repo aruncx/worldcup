@@ -1,0 +1,181 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+/* Tabs switcher */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.5rem;
+}
+
+.tabBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.6rem 1.2rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tabBtnActive {
+  color: var(--accent-gold);
+}
+
+.tabBtnActive::after {
+  content: '';
+  position: absolute;
+  bottom: -0.6rem;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-gold);
+}
+
+/* Predictor List */
+.matchesPredictList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .matchesPredictList {
+    grid-template-columns: 1fr;
+  }
+}
+
+.predictCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.predictTeamsArea {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.predictTeam {
+  width: 38%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.25rem;
+}
+
+.predictFlag {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.predictTeamName {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.inputsGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.scoreInput {
+  width: 50px;
+  height: 50px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  text-align: center;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.scoreInput:focus {
+  border-color: var(--accent-gold);
+}
+
+/* Leaderboard */
+.leaderboardTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.rowCurrentUser {
+  background: rgba(212, 175, 55, 0.05) !important;
+  border-left: 3px solid var(--accent-gold);
+}
+
+/* Tournament Predictions Form */
+.tournamentPredictForm {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-shadow: 0 4px 20px var(--shadow-color);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formLabel {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--accent-gold);
+}
+
+.selectInput {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.selectInput:focus {
+  border-color: var(--accent-gold);
+}

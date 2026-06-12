@@ -1,0 +1,147 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+/* Tabs switcher */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.5rem;
+}
+
+.tabBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.6rem 1.2rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tabBtnActive {
+  color: var(--accent-gold);
+}
+
+.tabBtnActive::after {
+  content: '';
+  position: absolute;
+  bottom: -0.6rem;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-gold);
+}
+
+/* Comparison layouts */
+.selectorsRow {
+  display: grid;
+  grid-template-columns: 1fr 0.2fr 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.selectInput {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.comparisonGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.compareRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0.8rem 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  align-items: center;
+  text-align: center;
+}
+
+.compareLabel {
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.compareValLeft {
+  text-align: left;
+  font-weight: 700;
+}
+
+.compareValRight {
+  text-align: right;
+  font-weight: 700;
+}
+
+/* AI Predictor */
+.predictBtn {
+  margin: 1.5rem auto 0 auto;
+  display: block;
+}
+
+.predictionResultsCard {
+  background: var(--card-bg);
+  border: 1px solid var(--accent-gold);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 30px var(--shadow-color);
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.oddsBar {
+  display: flex;
+  height: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.oddsSegment {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #fff;
+}
