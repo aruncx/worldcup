@@ -6,6 +6,7 @@ import { MapPin, Info, Calendar, Users } from 'lucide-react';
 import styles from './stadiums.module.css';
 import { stadiums, Stadium } from '@/lib/data/stadiums';
 import { matches } from '@/lib/data/matches';
+import TeamFlag from '@/components/TeamFlag';
 import { useStadiums } from '@/hooks/useWorldCupApi';
 import LiveDataBanner from '@/components/LiveDataBanner';
 
@@ -170,7 +171,13 @@ function StadiumsContent() {
               ) : (
                 getUpcomingMatches(selectedStadium.id).map(m => (
                   <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px', fontSize: '0.75rem' }}>
-                    <span>{m.homeTeamFlag} {m.homeTeamName} vs {m.awayTeamFlag} {m.awayTeamName}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} />
+                      <span>{m.homeTeamName}</span>
+                      <span style={{ color: 'var(--text-muted)' }}>vs</span>
+                      <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} />
+                      <span>{m.awayTeamName}</span>
+                    </span>
                     <span style={{ fontWeight: 700 }}>{m.date} • {m.time}</span>
                   </div>
                 ))

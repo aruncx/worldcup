@@ -23,6 +23,7 @@ import { players } from '@/lib/data/players';
 import { useMatches } from '@/hooks/useWorldCupApi';
 import { getTeamName, getMatchScore, getTeamFlag } from '@/lib/api/worldcup';
 import LiveDataBanner from '@/components/LiveDataBanner';
+import TeamFlag from '@/components/TeamFlag';
 
 export default function Home() {
   // Countdown timer state and hydration
@@ -173,11 +174,11 @@ export default function Home() {
           {nextMatch ? (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '1.2rem' }}>{nextMatch.homeTeamFlag}</span>
+                <TeamFlag flag={nextMatch.homeTeamFlag} name={nextMatch.homeTeamName} style={{ fontSize: '1.2rem' }} />
                 <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>
                   {nextMatch.homeTeamName} vs {nextMatch.awayTeamName}
                 </span>
-                <span style={{ fontSize: '1.2rem' }}>{nextMatch.awayTeamFlag}</span>
+                <TeamFlag flag={nextMatch.awayTeamFlag} name={nextMatch.awayTeamName} style={{ fontSize: '1.2rem' }} />
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
                 {nextMatch.stage} {nextMatch.group ? `• Group ${nextMatch.group}` : ''} • {nextMatch.stadiumName}
@@ -327,7 +328,7 @@ export default function Home() {
             {liveMatches.map(m => (
               <Link href={`/matches?id=${m.id}`} key={m.id} className={`${styles.matchMiniCard} glass-card`} style={{ borderLeft: '4px solid var(--accent-red)' }}>
                 <div className={styles.matchTeam}>
-                  <span style={{ marginRight: '8px' }}>{m.homeTeamFlag}</span>
+                  <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} style={{ marginRight: '8px' }} />
                   <span style={{ fontWeight: 600 }}>{m.homeTeamName}</span>
                 </div>
                 <div className={styles.matchScoreArea}>
@@ -342,7 +343,7 @@ export default function Home() {
                 </div>
                 <div className={`${styles.matchTeam} styles.matchTeamRight`} style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end' }}>
                   <span style={{ fontWeight: 600 }}>{m.awayTeamName}</span>
-                  <span style={{ marginLeft: '8px' }}>{m.awayTeamFlag}</span>
+                  <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} style={{ marginLeft: '8px' }} />
                 </div>
               </Link>
             ))}
@@ -351,7 +352,7 @@ export default function Home() {
             {completedMatches.map(m => (
               <Link href={`/matches?id=${m.id}`} key={m.id} className={`${styles.matchMiniCard} glass-card`}>
                 <div className={styles.matchTeam}>
-                  <span style={{ marginRight: '8px' }}>{m.homeTeamFlag}</span>
+                  <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} style={{ marginRight: '8px' }} />
                   <span>{m.homeTeamName}</span>
                 </div>
                 <div className={styles.matchScoreArea}>
@@ -364,7 +365,7 @@ export default function Home() {
                 </div>
                 <div className={`${styles.matchTeam} styles.matchTeamRight`} style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end' }}>
                   <span>{m.awayTeamName}</span>
-                  <span style={{ marginLeft: '8px' }}>{m.awayTeamFlag}</span>
+                  <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} style={{ marginLeft: '8px' }} />
                 </div>
               </Link>
             ))}

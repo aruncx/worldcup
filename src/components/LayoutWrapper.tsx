@@ -30,6 +30,7 @@ import { stadiums } from '@/lib/data/stadiums';
 import { matches } from '@/lib/data/matches';
 import { getUserState } from '@/app/actions';
 import { useMatches } from '@/hooks/useWorldCupApi';
+import TeamFlag from '@/components/TeamFlag';
 
 // Structured notification type
 interface Notification {
@@ -58,33 +59,8 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [notifOpen, setNotifOpen] = useState(false);
-  const [unreadNotifs, setUnreadNotifs] = useState(2);
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: "nt1",
-      type: "goal",
-      title: "GOAL! France 2 - 1 Japan",
-      desc: "Kylian Mbappé bags a brace (61') assisted by Antoine Griezmann. Les Bleus take the lead!",
-      time: "15m ago",
-      live: true
-    },
-    {
-      id: "nt2",
-      type: "goal",
-      title: "GOAL! Colombia 2 - 2 Ghana",
-      desc: "Mohammed Kudus scores a stunning free-kick (41') to bring the Black Stars level!",
-      time: "2m ago",
-      live: true
-    },
-    {
-      id: "nt3",
-      type: "var",
-      title: "VAR Decision - France vs Japan",
-      desc: "Penalty appeal by France for handball is rejected after pitchside review (68').",
-      time: "8m ago",
-      live: true
-    }
-  ]);
+  const [unreadNotifs, setUnreadNotifs] = useState(0);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   
   // User follow lists for custom notification filters
   const [followedTeams, setFollowedTeams] = useState<string[]>([]);
@@ -118,51 +94,105 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     localStorage.setItem('wcup_theme', nextTheme);
   };
 
-  // Simulated live match alert system (triggers every 45 seconds to keep dashboard dynamic)
+  // Load initial notifications & run real-time match alerts simulator
   useEffect(() => {
-    const alerts = [
+    setNotifications([
       {
-        id: "nt_live_1",
-        type: "goal" as const,
-        title: "GOAL! France 3 - 1 Japan",
-        desc: "Jude Bellingham's Real Madrid teammate Kylian Mbappé completes his hat-trick (82') with a sublime volley!",
-        time: "Just now",
-        live: true
+        id: 'n1',
+        type: 'goal',
+        title: 'GOAL! USA 3 - 1 Iraq',
+        desc: 'Folarin Balogun scores in the 82nd minute, assisted by Giovanni Reyna.',
+        time: '2h ago',
+        live: false,
       },
       {
-        id: "nt_live_2",
-        type: "card" as const,
-        title: "RED CARD! Colombia vs Ghana",
-        desc: "Thomas Partey receives a second yellow card (87') for a late challenge. Ghana down to 10 men!",
-        time: "Just now",
-        live: true
+        id: 'n2',
+        type: 'card',
+        title: 'YELLOW CARD - Weston McKennie (USA)',
+        desc: 'Weston McKennie cautioned in the 75th minute for a tactical foul.',
+        time: '2h ago',
+        live: false,
       },
       {
-        id: "nt_live_3",
-        type: "goal" as const,
-        title: "GOAL! Colombia 3 - 2 Ghana",
-        desc: "Luis Díaz scores a dramatic late winner (90+1')! El Campín erupts in celebration!",
-        time: "Just now",
-        live: true
-      }
+        id: 'n3',
+        type: 'goal',
+        title: 'GOAL! USA 2 - 1 Iraq',
+        desc: 'Aymen Hussein pulls one back for Iraq in the 68th minute.',
+        time: '2h ago',
+        live: false,
+      },
+      {
+        id: 'n4',
+        type: 'var',
+        title: 'VAR DECISION - Penalty Awarded (USA)',
+        desc: 'VAR review confirms a foul in the box on Christian Pulisic. Penalty awarded.',
+        time: '3h ago',
+        live: false,
+      },
+    ]);
+
+    let eventIndex = 0;
+    const simulatedEventsList = [
+      {
+        type: 'goal' as const,
+        title: 'GOAL! Mexico 1 - 0 Saudi Arabia',
+        desc: 'Santiago Giménez scores a stunning header from a corner kick! (34\')',
+      },
+      {
+        type: 'card' as const,
+        title: 'YELLOW CARD - Ali Al-Bulayhi (Saudi Arabia)',
+        desc: 'Cautioned for a late challenge on Hirving Lozano. (41\')',
+      },
+      {
+        type: 'var' as const,
+        title: 'VAR REVIEW - Penalty Review (Mexico)',
+        desc: 'VAR check confirms a penalty for handball in the box. (56\')',
+      },
+      {
+        type: 'goal' as const,
+        title: 'GOAL! Cameroon 1 - 0 Slovakia',
+        desc: 'Vincent Aboubakar converts from close range after a defensive error! (62\')',
+      },
+      {
+        type: 'card' as const,
+        title: 'RED CARD - Milan Škriniar (Slovakia)',
+        desc: 'Dismissed after receiving a second yellow card for a dangerous tackle. (78\')',
+      },
+      {
+        type: 'goal' as const,
+        title: 'GOAL! Cameroon 2 - 0 Slovakia',
+        desc: 'Bryan Mbeumo seals the victory with a counter-attack strike! (89\')',
+      },
     ];
 
-    let alertIndex = 0;
+    // Trigger a simulated live alert every 45 seconds
     const interval = setInterval(() => {
-      if (alertIndex < alerts.length) {
-        const newAlert = alerts[alertIndex];
-        setNotifications(prev => [newAlert, ...prev]);
-        setUnreadNotifs(prev => prev + 1);
-        setActiveToast(newAlert);
-        
-        // Auto-dismiss toast after 6 seconds
-        setTimeout(() => {
-          setActiveToast(null);
-        }, 6000);
-        
-        alertIndex++;
+      if (eventIndex >= simulatedEventsList.length) {
+        clearInterval(interval);
+        return;
       }
-    }, 45000); // 45 seconds
+
+      const rawEvent = simulatedEventsList[eventIndex];
+      const newNotif: Notification = {
+        id: `sim-${Date.now()}`,
+        type: rawEvent.type,
+        title: rawEvent.title,
+        desc: rawEvent.desc,
+        time: 'Just now',
+        live: true,
+      };
+
+      setNotifications(prev => [newNotif, ...prev]);
+      setUnreadNotifs(prev => prev + 1);
+      setActiveToast(newNotif);
+      
+      // Auto-clear active toast after 6 seconds
+      setTimeout(() => {
+        setActiveToast(curr => curr?.id === newNotif.id ? null : curr);
+      }, 6000);
+
+      eventIndex++;
+    }, 45000);
 
     return () => clearInterval(interval);
   }, []);
@@ -374,7 +404,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
                       {filteredTeams.map(t => (
                         <div key={t.id} className={styles.searchItem} onClick={() => handleSearchResultClick(`/teams?id=${t.id}`)}>
                           <div className={styles.searchItemLeft}>
-                            <span style={{ fontSize: '1.25rem' }}>{t.flag}</span>
+                            <TeamFlag flag={t.flag} name={t.name} style={{ fontSize: '1.25rem' }} />
                             <div>
                               <div style={{ fontWeight: 600 }}>{t.name} ({t.code})</div>
                               <div className={styles.searchItemSub}>{t.confederation} • Coach: {t.coach}</div>
@@ -393,7 +423,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
                       {filteredPlayers.map(p => (
                         <div key={p.id} className={styles.searchItem} onClick={() => handleSearchResultClick(`/players?id=${p.id}`)}>
                           <div className={styles.searchItemLeft}>
-                            <span style={{ fontSize: '1.25rem' }}>{p.teamFlag}</span>
+                            <TeamFlag flag={p.teamFlag} name={p.name} style={{ fontSize: '1.25rem' }} />
                             <div>
                               <div style={{ fontWeight: 600 }}>{p.name}</div>
                               <div className={styles.searchItemSub}>{p.position} • {p.club}</div>
@@ -445,7 +475,11 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
             </div>
             <div className={styles.drawerContent}>
               {notifications.length === 0 ? (
-                <div style={{ textAlign: 'center', color: 'var(--text-muted)', paddingTop: '4rem' }}>No recent updates.</div>
+                <div style={{ textAlign: 'center', color: 'var(--text-muted)', paddingTop: '4rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+                  <Bell size={32} style={{ color: 'var(--accent-gold)', opacity: 0.5 }} />
+                  <p style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>No live alerts yet</p>
+                  <p style={{ fontSize: '0.8rem', maxWidth: '240px', lineHeight: 1.5 }}>Match alerts will appear here automatically when games kick off on June 11, 2026.</p>
+                </div>
               ) : (
                 notifications.map(n => (
                   <div key={n.id} className={`${styles.notifCard} ${n.live ? styles.notifLive : ''}`}>

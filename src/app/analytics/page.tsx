@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Shield, Sparkles } from 'lucide-react';
 import styles from './analytics.module.css';
+import { useMatches } from '@/hooks/useWorldCupApi';
+import TeamFlag from '@/components/TeamFlag';
 import {
   ResponsiveContainer,
   BarChart,
@@ -25,6 +27,7 @@ import {
 
 export default function AnalyticsDashboard() {
   const [isMounted, setIsMounted] = useState(false);
+  const { data: apiMatches } = useMatches({ refreshInterval: 60000 });
 
   useEffect(() => {
     setIsMounted(true);
@@ -49,11 +52,68 @@ export default function AnalyticsDashboard() {
   ];
 
   // Dynamic Goal Trend Data (goals per match day in June 2026)
-  const goalTrendData = [
-    { date: 'June 11', Goals: 6, average: 3.0 },
-    { date: 'June 12', Goals: 4, average: 2.0 },
-    { date: 'June 13 (Today)', Goals: 13, average: 3.25 }
-  ];
+  const getGoalTrend = () => {
+    if (!apiMatches || apiMatches.length === 0) {
+      return [
+        { date: 'June 11', Goals: 6, average: 3.0 },
+        { date: 'June 12', Goals: 4, average: 2.0 },
+        { date: 'June 13', Goals: 13, average: 3.25 }
+      ];
+    }
+
+    const dateMap = new Map<string, { goals: number; matches: number }>();
+    
+    // Sort all matches chronologically by date
+    const sortedMatches = [...apiMatches].sort((a, b) => {
+      const dateA = a.datetime || a.date || '';
+      const dateB = b.datetime || b.date || '';
+      return dateA.localeCompare(dateB);
+    });
+
+    sortedMatches.forEach(m => {
+      const isCompleted = m.status === 'completed' || m.status === 'finished';
+      const isLive = m.status === 'live' || m.status === 'in_progress';
+      
+      if (isCompleted || isLive) {
+        const dateStr = m.date || (m.datetime ? m.datetime.split('T')[0] : null);
+        if (dateStr) {
+          let displayDate = dateStr;
+          try {
+            const dateObj = new Date(dateStr + 'T00:00:00');
+            displayDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          } catch {}
+
+          const scoreHome = m.home_score ?? null;
+          const scoreAway = m.away_score ?? null;
+          
+          if (scoreHome !== null && scoreAway !== null) {
+            const goals = scoreHome + scoreAway;
+            const existing = dateMap.get(displayDate) || { goals: 0, matches: 0 };
+            dateMap.set(displayDate, {
+              goals: existing.goals + goals,
+              matches: existing.matches + 1
+            });
+          }
+        }
+      }
+    });
+
+    if (dateMap.size > 0) {
+      return Array.from(dateMap.entries()).map(([date, val]) => ({
+        date,
+        Goals: val.goals,
+        average: val.matches > 0 ? parseFloat((val.goals / val.matches).toFixed(2)) : 0
+      }));
+    }
+
+    return [
+      { date: 'June 11', Goals: 6, average: 3.0 },
+      { date: 'June 12', Goals: 4, average: 2.0 },
+      { date: 'June 13', Goals: 13, average: 3.25 }
+    ];
+  };
+
+  const goalTrendData = getGoalTrend();
 
   // Team Comparison Radar Data (Argentina vs France)
   const radarData = [
@@ -86,6 +146,9 @@ export default function AnalyticsDashboard() {
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+          <span className="status-live" style={{ width: '8px', height: '8px', background: apiMatches ? 'var(--accent-green)' : 'var(--text-muted)' }}></span>
+          <span>{apiMatches ? 'Live Stats Sync' : 'Offline simulator'}</span>
+          <span style={{ margin: '0 4px', color: 'var(--text-muted)' }}>•</span>
           <Sparkles size={16} style={{ color: 'var(--accent-gold)' }} /> Compiled by Opta & FIFA+ data model
         </div>
       </section>
@@ -211,7 +274,7 @@ export default function AnalyticsDashboard() {
                 <div key={idx} className={styles.goalieRow}>
                   <div className={styles.goalieLeft}>
                     <span style={{ color: 'var(--text-muted)', width: '20px' }}>#{idx+1}</span>
-                    <span style={{ fontSize: '1.2rem' }}>{goalie.flag}</span>
+                    <TeamFlag flag={goalie.flag} name={goalie.country} style={{ fontSize: '1.2rem' }} />
                     <span>{goalie.name}</span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 400 }}>({goalie.country})</span>
                   </div>

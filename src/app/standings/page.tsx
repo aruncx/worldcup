@@ -7,6 +7,7 @@ import { teams, Team } from '@/lib/data/teams';
 import { matches } from '@/lib/data/matches';
 import { useGroups } from '@/hooks/useWorldCupApi';
 import LiveDataBanner from '@/components/LiveDataBanner';
+import TeamFlag from '@/components/TeamFlag';
 
 
 export default function Standings() {
@@ -63,20 +64,8 @@ export default function Standings() {
       }
     });
 
-    // If a team has played 0 games dynamically (e.g. no matches completed yet), fall back to seed data.
-    const finalStandings = Array.from(standingsMap.values()).map(t => {
-      if (t.stats.played === 0) {
-        // Find seed team and copy their stats
-        const seedTeam = teams.find(st => st.id === t.id);
-        if (seedTeam) {
-          return { ...t, stats: { ...seedTeam.stats } };
-        }
-      }
-      return t;
-    });
-
     // Sort standings: Points desc -> Goal Difference desc -> Goals For desc -> FIFA ranking asc
-    return finalStandings.sort((a, b) => {
+    return Array.from(standingsMap.values()).sort((a, b) => {
       if (b.stats.points !== a.stats.points) {
         return b.stats.points - a.stats.points;
       }
@@ -167,7 +156,9 @@ export default function Standings() {
             <div key={g} className={`${styles.groupCard} glass-card`}>
               <div className={styles.groupHeader}>
                 <span>Group {g}</span>
-                <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-muted)' }}>Matchday 1 Completed</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-muted)' }}>
+                  {apiGroups && apiGroups.length > 0 ? 'Live Data' : 'Pre-Tournament'}
+                </span>
               </div>
 
               <table className={styles.table}>
@@ -206,7 +197,7 @@ export default function Standings() {
                         </td>
                         <td className={styles.td}>
                           <div className={styles.teamCol}>
-                            <span style={{ fontSize: '1.2rem' }}>{team.flag}</span>
+                            <TeamFlag flag={team.flag} name={team.name} style={{ fontSize: '1.2rem' }} />
                             <span className={styles.bold}>{team.name}</span>
                             <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>#{team.ranking}</span>
                           </div>

@@ -6,6 +6,7 @@ import { User, Search, X, Award, Eye, ShieldAlert } from 'lucide-react';
 import styles from './players.module.css';
 import { players, Player } from '@/lib/data/players';
 import { toggleFollowPlayer, getUserState } from '@/app/actions';
+import TeamFlag from '@/components/TeamFlag';
 
 function PlayersContent() {
   const searchParams = useSearchParams();
@@ -149,7 +150,10 @@ function PlayersContent() {
               </div>
 
               <div className={styles.playerMetaLine}>
-                <span>{p.teamFlag} {p.teamName}</span>
+                <span>
+                  <TeamFlag flag={p.teamFlag} name={p.teamName} style={{ marginRight: '4px' }} />
+                  {p.teamName}
+                </span>
                 <span style={{ fontWeight: 600 }}>{p.club.split(' ')[0]}</span>
               </div>
             </div>
@@ -172,7 +176,10 @@ function PlayersContent() {
               <div>
                 <h2 className={styles.modalName}>{selectedPlayer.name}</h2>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '0.25rem' }}>
-                  <span>{selectedPlayer.teamFlag} {selectedPlayer.teamName}</span>
+                  <span>
+                    <TeamFlag flag={selectedPlayer.teamFlag} name={selectedPlayer.teamName} style={{ marginRight: '4px' }} />
+                    {selectedPlayer.teamName}
+                  </span>
                   <span>•</span>
                   <span>{selectedPlayer.club}</span>
                 </div>

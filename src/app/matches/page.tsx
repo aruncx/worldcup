@@ -23,6 +23,7 @@ import { toggleFollowTeam, getUserState } from '@/app/actions';
 import { useMatches } from '@/hooks/useWorldCupApi';
 import { getTeamName, getMatchScore, getLiveMatches, getCompletedMatches, getUpcomingMatches, getMatchStage, getTeamFlag } from '@/lib/api/worldcup';
 import LiveDataBanner from '@/components/LiveDataBanner';
+import TeamFlag from '@/components/TeamFlag';
 
 function MatchCenterContent() {
   const searchParams = useSearchParams();
@@ -214,7 +215,7 @@ function MatchCenterContent() {
                   <div className={styles.matchTeamsRow}>
                     <div className={styles.matchTeamLine}>
                       <div className={styles.teamNameGroup}>
-                        <span>{m.homeTeamFlag}</span>
+                        <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} />
                         <span style={{ fontWeight: isActive ? 700 : 500 }}>{m.homeTeamName}</span>
                         {followedTeams.includes(m.homeTeamId) && <span style={{ fontSize: '0.65rem', color: 'var(--accent-gold)' }}>★</span>}
                       </div>
@@ -225,7 +226,7 @@ function MatchCenterContent() {
 
                     <div className={styles.matchTeamLine}>
                       <div className={styles.teamNameGroup}>
-                        <span>{m.awayTeamFlag}</span>
+                        <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} />
                         <span style={{ fontWeight: isActive ? 700 : 500 }}>{m.awayTeamName}</span>
                         {followedTeams.includes(m.awayTeamId) && <span style={{ fontSize: '0.65rem', color: 'var(--accent-gold)' }}>★</span>}
                       </div>
@@ -263,7 +264,7 @@ function MatchCenterContent() {
 
               <div className={styles.scoreboardLarge}>
                 <div className={styles.largeTeam}>
-                  <span className={styles.largeFlag}>{activeMatch.homeTeamFlag}</span>
+                  <TeamFlag flag={activeMatch.homeTeamFlag} name={activeMatch.homeTeamName} className={styles.largeFlag} style={{ fontSize: '2rem' }} />
                   <span className={styles.largeTeamName}>{activeMatch.homeTeamName}</span>
                   <button 
                     onClick={() => handleFollowActiveTeam(activeMatch.homeTeamId)}
@@ -309,7 +310,7 @@ function MatchCenterContent() {
                 </div>
 
                 <div className={styles.largeTeam}>
-                  <span className={styles.largeFlag}>{activeMatch.awayTeamFlag}</span>
+                  <TeamFlag flag={activeMatch.awayTeamFlag} name={activeMatch.awayTeamName} className={styles.largeFlag} style={{ fontSize: '2rem' }} />
                   <span className={styles.largeTeamName}>{activeMatch.awayTeamName}</span>
                   <button 
                     onClick={() => handleFollowActiveTeam(activeMatch.awayTeamId)}

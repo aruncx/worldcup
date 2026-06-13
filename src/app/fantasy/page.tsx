@@ -6,6 +6,7 @@ import styles from './fantasy.module.css';
 import { teams } from '@/lib/data/teams';
 import { players } from '@/lib/data/players';
 import { matches } from '@/lib/data/matches';
+import TeamFlag from '@/components/TeamFlag';
 import type { UserPrediction, TournamentPrediction, LeaderboardEntry } from '@/lib/db';
 import { 
   submitPrediction, 
@@ -185,7 +186,7 @@ export default function FantasyPredictor() {
                   <div className={styles.predictTeamsArea}>
                     {/* Home Team */}
                     <div className={styles.predictTeam}>
-                      <span className={styles.predictFlag}>{m.homeTeamFlag}</span>
+                      <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} className={styles.predictFlag} />
                       <span className={styles.predictTeamName}>{m.homeTeamName}</span>
                     </div>
 
@@ -212,7 +213,7 @@ export default function FantasyPredictor() {
 
                     {/* Away Team */}
                     <div className={styles.predictTeam}>
-                      <span className={styles.predictFlag}>{m.awayTeamFlag}</span>
+                      <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} className={styles.predictFlag} />
                       <span className={styles.predictTeamName}>{m.awayTeamName}</span>
                     </div>
                   </div>

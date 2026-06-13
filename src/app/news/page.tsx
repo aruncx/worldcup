@@ -1,19 +1,40 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Newspaper, Calendar, Clock, ChevronRight, X } from 'lucide-react';
 import styles from './news.module.css';
-import { news, NewsItem } from '@/lib/data/news';
+import { news as staticNews, NewsItem } from '@/lib/data/news';
 
 export default function NewsFeed() {
+  const [articles, setArticles] = useState<NewsItem[]>(staticNews);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [readingArticle, setReadingArticle] = useState<NewsItem | null>(null);
+
+  useEffect(() => {
+    async function fetchLiveNews() {
+      try {
+        const res = await fetch('/api/news');
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json) && json.length > 0) {
+            setArticles(json);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch live news feed:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchLiveNews();
+  }, []);
 
   // Category tags
   const categories = ['All', 'breaking', 'preview', 'report', 'injury', 'announcement'];
 
   // Filtering Logic
-  const filteredNews = news.filter(n => {
+  const filteredNews = articles.filter(n => {
     return activeCategory === 'All' || n.category === activeCategory;
   });
 
@@ -22,8 +43,25 @@ export default function NewsFeed() {
       {/* Intro Header */}
       <section className={styles.intro}>
         <div>
-          <h1 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h1 style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <Newspaper style={{ color: 'var(--accent-gold)' }} /> Live Tournament News Feed
+            <span 
+              style={{ 
+                fontSize: '0.65rem', 
+                background: 'rgba(0, 230, 118, 0.1)', 
+                border: '1px solid var(--accent-green)', 
+                color: 'var(--accent-green)', 
+                padding: '2px 8px', 
+                borderRadius: '12px',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                marginLeft: '8px'
+              }}
+            >
+              <span className="status-live" style={{ background: 'var(--accent-green)' }}></span> LIVE
+            </span>
           </h1>
           <p className={styles.subtitle}>
             Stay informed with the latest breaking scoops, previews, injury bulletins, and tactical reports.

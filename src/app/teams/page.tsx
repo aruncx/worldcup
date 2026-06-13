@@ -9,6 +9,7 @@ import { matches } from '@/lib/data/matches';
 import { toggleFollowTeam, getUserState } from '@/app/actions';
 import { useTeams } from '@/hooks/useWorldCupApi';
 import LiveDataBanner from '@/components/LiveDataBanner';
+import TeamFlag from '@/components/TeamFlag';
 
 function TeamsContent() {
   const searchParams = useSearchParams();
@@ -142,7 +143,7 @@ function TeamsContent() {
           return (
             <div key={t.id} className={`${styles.card} glass-card`} onClick={() => handleOpenTeamModal(t)}>
               <div className={styles.cardTop}>
-                <span className={styles.flag}>{t.flag}</span>
+                <TeamFlag flag={t.flag} name={t.name} className={styles.flag} />
                 <span className={styles.rankingBadge}>Rank #{t.ranking}</span>
               </div>
               <div>
@@ -178,7 +179,7 @@ function TeamsContent() {
             </button>
 
             <div className={styles.modalHeader}>
-              <span className={styles.modalFlag}>{selectedTeam.flag}</span>
+              <TeamFlag flag={selectedTeam.flag} name={selectedTeam.name} className={styles.modalFlag} style={{ fontSize: '2rem' }} />
               <div>
                 <h2 className={styles.modalInfoTitle}>{selectedTeam.name}</h2>
                 <div className={styles.confed} style={{ fontSize: '0.85rem' }}>{selectedTeam.confederation} • Group {selectedTeam.group}</div>
@@ -258,7 +259,7 @@ function TeamsContent() {
                   <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '10px', fontSize: '0.8rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ fontWeight: 600 }}>{isHome ? 'VS' : 'AT'}</span>
-                      <span>{opponentFlag}</span>
+                      <TeamFlag flag={opponentFlag} name={opponent} />
                       <span style={{ fontWeight: 600 }}>{opponent}</span>
                     </div>
 

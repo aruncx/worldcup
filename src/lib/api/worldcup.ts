@@ -1,10 +1,9 @@
 /**
  * WorldCup 2026 API Client
- * Source: https://worldcup26.ir
- * Free, no API key required
+ * Powered by football-data.org (via local API proxy)
  */
 
-const BASE_URL = 'https://worldcup26.ir/get';
+const BASE_URL = '/api/worldcup';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

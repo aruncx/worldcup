@@ -34,7 +34,7 @@ export const teams: Team[] = [
     confederation: "CONCACAF",
     coach: "Mauricio Pochettino",
     captain: "Christian Pulisic",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 3, goalsAgainst: 1, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "D", "W", "L", "W"],
     avgPossession: 55.4,
     passAccuracy: 84.1
@@ -49,7 +49,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Marc Brys",
     captain: "Vincent Aboubakar",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "L", "W", "D", "W"],
     avgPossession: 48.2,
     passAccuracy: 78.5
@@ -64,7 +64,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Francesco Calzona",
     captain: "Milan Škriniar",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "L", "W", "D"],
     avgPossession: 51.0,
     passAccuracy: 82.0
@@ -79,7 +79,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Jesús Casas",
     captain: "Jalal Hassan",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 1, goalsAgainst: 3, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "W", "D", "L"],
     avgPossession: 45.4,
     passAccuracy: 76.8
@@ -96,7 +96,7 @@ export const teams: Team[] = [
     confederation: "CONCACAF",
     coach: "Javier Aguirre",
     captain: "Edson Álvarez",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 1, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "L", "W", "D", "L"],
     avgPossession: 53.0,
     passAccuracy: 81.5
@@ -111,7 +111,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Jon Dahl Tomasson",
     captain: "Victor Lindelöf",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 1, goalsAgainst: 1, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "W", "W", "L", "W"],
     avgPossession: 56.8,
     passAccuracy: 85.3
@@ -126,7 +126,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Walid Regragui",
     captain: "Achraf Hakimi",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 1, goalsAgainst: 1, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "W", "L", "W", "W"],
     avgPossession: 50.2,
     passAccuracy: 80.9
@@ -141,7 +141,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Hong Myung-bo",
     captain: "Son Heung-min",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 1, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "W", "D", "W"],
     avgPossession: 52.1,
     passAccuracy: 83.4
@@ -158,7 +158,7 @@ export const teams: Team[] = [
     confederation: "CONCACAF",
     coach: "Jesse Marsch",
     captain: "Alphonso Davies",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "W", "L", "D", "W"],
     avgPossession: 49.5,
     passAccuracy: 79.2
@@ -173,7 +173,7 @@ export const teams: Team[] = [
     confederation: "CONMEBOL",
     coach: "Marcelo Bielsa",
     captain: "Federico Valverde",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "D", "L", "W", "W"],
     avgPossession: 58.2,
     passAccuracy: 82.6
@@ -188,7 +188,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Pape Thiaw",
     captain: "Kalidou Koulibaly",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "W", "W", "L", "D"],
     avgPossession: 52.0,
     passAccuracy: 81.0
@@ -203,7 +203,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Srečko Katanec",
     captain: "Eldor Shomurodov",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "D", "W", "L"],
     avgPossession: 44.1,
     passAccuracy: 75.3
@@ -220,7 +220,7 @@ export const teams: Team[] = [
     confederation: "CONMEBOL",
     coach: "Lionel Scaloni",
     captain: "Lionel Messi",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 3, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "W", "D", "W"],
     avgPossession: 62.4,
     passAccuracy: 89.5
@@ -235,7 +235,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Michał Probierz",
     captain: "Robert Lewandowski",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 1, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "L", "W", "D", "W"],
     avgPossession: 47.9,
     passAccuracy: 80.2
@@ -250,7 +250,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Hossam Hassan",
     captain: "Mohamed Salah",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 1, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "D", "W", "W"],
     avgPossession: 50.5,
     passAccuracy: 81.3
@@ -265,7 +265,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Tony Popovic",
     captain: "Mathew Ryan",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 3, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "D", "L", "W"],
     avgPossession: 48.0,
     passAccuracy: 78.9
@@ -282,7 +282,7 @@ export const teams: Team[] = [
     confederation: "CONMEBOL",
     coach: "Dorival Júnior",
     captain: "Danilo",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 4, goalsAgainst: 1, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "D", "W", "L"],
     avgPossession: 60.1,
     passAccuracy: 87.8
@@ -297,7 +297,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Serhiy Rebrov",
     captain: "Andriy Yarmolenko",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "L", "W", "W", "D"],
     avgPossession: 54.0,
     passAccuracy: 83.9
@@ -312,7 +312,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Vladimir Petković",
     captain: "Riyad Mahrez",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "D", "W", "L"],
     avgPossession: 49.3,
     passAccuracy: 79.8
@@ -327,7 +327,7 @@ export const teams: Team[] = [
     confederation: "OFC",
     coach: "Darren Bazeley",
     captain: "Chris Wood",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 1, goalsAgainst: 4, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "L", "D", "W"],
     avgPossession: 41.5,
     passAccuracy: 73.1
@@ -344,7 +344,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Didier Deschamps",
     captain: "Kylian Mbappé",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "L", "W", "W"],
     avgPossession: 58.7,
     passAccuracy: 88.2
@@ -359,7 +359,7 @@ export const teams: Team[] = [
     confederation: "CONMEBOL",
     coach: "Néstor Lorenzo",
     captain: "James Rodríguez",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 1, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "D", "W", "W"],
     avgPossession: 53.6,
     passAccuracy: 83.5
@@ -374,7 +374,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Otto Addo",
     captain: "Thomas Partey",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 1, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "L", "W", "D", "W"],
     avgPossession: 46.8,
     passAccuracy: 77.2
@@ -389,7 +389,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Hajime Moriyasu",
     captain: "Wataru Endo",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "W", "D", "W"],
     avgPossession: 52.3,
     passAccuracy: 82.7
@@ -406,7 +406,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Thomas Tuchel",
     captain: "Harry Kane",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 3, goalsAgainst: 1, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "D", "L", "W"],
     avgPossession: 59.2,
     passAccuracy: 87.0
@@ -421,7 +421,7 @@ export const teams: Team[] = [
     confederation: "CONMEBOL",
     coach: "Sebastián Beccacece",
     captain: "Enner Valencia",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 1, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "D", "W", "L", "W"],
     avgPossession: 50.1,
     passAccuracy: 80.4
@@ -436,7 +436,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Tom Saintfiet",
     captain: "Hamari Traoré",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 1, goalsAgainst: 3, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "D", "W", "D"],
     avgPossession: 47.5,
     passAccuracy: 78.1
@@ -451,7 +451,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Hervé Renard",
     captain: "Salem Al-Dawsari",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 1, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "D", "L", "W", "W"],
     avgPossession: 49.8,
     passAccuracy: 79.5
@@ -468,7 +468,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Luis de la Fuente",
     captain: "Alvaro Morata",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "W", "W", "D"],
     avgPossession: 64.2,
     passAccuracy: 90.1
@@ -483,7 +483,7 @@ export const teams: Team[] = [
     confederation: "CONMEBOL",
     coach: "Ricardo Gareca",
     captain: "Mauricio Isla",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 1, goalsAgainst: 1, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "L", "W", "D", "L"],
     avgPossession: 48.9,
     passAccuracy: 79.3
@@ -498,7 +498,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Augustine Eguavoen",
     captain: "William Troost-Ekong",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 1, goalsAgainst: 1, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "W", "L", "D", "W"],
     avgPossession: 51.5,
     passAccuracy: 81.2
@@ -513,7 +513,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Amir Ghalenoei",
     captain: "Alireza Jahanbakhsh",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "W", "D", "W"],
     avgPossession: 50.8,
     passAccuracy: 80.0
@@ -530,7 +530,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Roberto Martínez",
     captain: "Cristiano Ronaldo",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 3, goalsAgainst: 1, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "D", "W", "L"],
     avgPossession: 61.5,
     passAccuracy: 88.5
@@ -545,7 +545,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Brian Riemer",
     captain: "Pierre-Emile Højbjerg",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "L", "D", "W", "D"],
     avgPossession: 54.3,
     passAccuracy: 84.6
@@ -560,7 +560,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Kais Yaâkoubi",
     captain: "Yassine Meriah",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 1, goalsAgainst: 3, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "D", "W", "L", "W"],
     avgPossession: 46.0,
     passAccuracy: 78.4
@@ -575,7 +575,7 @@ export const teams: Team[] = [
     confederation: "CONCACAF",
     coach: "Reinaldo Rueda",
     captain: "Anthony Lozano",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "L", "W", "D"],
     avgPossession: 45.2,
     passAccuracy: 76.1
@@ -592,7 +592,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Luciano Spalletti",
     captain: "Gianluigi Donnarumma",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "D", "W", "L"],
     avgPossession: 57.0,
     passAccuracy: 86.9
@@ -607,7 +607,7 @@ export const teams: Team[] = [
     confederation: "CONMEBOL",
     coach: "Jorge Fossati",
     captain: "Luis Advíncula",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 1, goalsAgainst: 1, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "L", "D", "W", "W"],
     avgPossession: 48.5,
     passAccuracy: 78.8
@@ -622,7 +622,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Hugo Broos",
     captain: "Ronwen Williams",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 1, goalsAgainst: 1, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "W", "W", "D", "L"],
     avgPossession: 51.2,
     passAccuracy: 80.5
@@ -637,7 +637,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Paulo Bento",
     captain: "Khalid Eisa",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "D", "L", "W"],
     avgPossession: 47.3,
     passAccuracy: 77.9
@@ -654,7 +654,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Julian Nagelsmann",
     captain: "Joshua Kimmich",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 3, goalsAgainst: 0, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "D", "W", "D"],
     avgPossession: 62.1,
     passAccuracy: 89.1
@@ -669,7 +669,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Murat Yakin",
     captain: "Granit Xhaka",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 1, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "L", "W", "D", "W"],
     avgPossession: 53.2,
     passAccuracy: 83.0
@@ -684,7 +684,7 @@ export const teams: Team[] = [
     confederation: "CAF",
     coach: "Emerse Faé",
     captain: "Franck Kessié",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 1, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "W", "W", "D", "L"],
     avgPossession: 51.8,
     passAccuracy: 81.6
@@ -699,7 +699,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Rashid Jaber",
     captain: "Harib Al-Saadi",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 3, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "L", "W", "D", "L"],
     avgPossession: 44.0,
     passAccuracy: 76.5
@@ -716,7 +716,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Ronald Koeman",
     captain: "Virgil van Dijk",
-    stats: { played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 1, points: 3 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["W", "W", "D", "W", "L"],
     avgPossession: 59.8,
     passAccuracy: 86.4
@@ -731,7 +731,7 @@ export const teams: Team[] = [
     confederation: "UEFA",
     coach: "Zlatko Dalić",
     captain: "Luka Modrić",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 1, goalsAgainst: 1, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "W", "W", "D", "W"],
     avgPossession: 55.6,
     passAccuracy: 85.0
@@ -746,7 +746,7 @@ export const teams: Team[] = [
     confederation: "CONCACAF",
     coach: "Thomas Christiansen",
     captain: "Aníbal Godoy",
-    stats: { played: 1, won: 0, drawn: 1, lost: 0, goalsFor: 1, goalsAgainst: 1, points: 1 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["D", "W", "L", "W", "D"],
     avgPossession: 48.0,
     passAccuracy: 79.0
@@ -761,7 +761,7 @@ export const teams: Team[] = [
     confederation: "AFC",
     coach: "Branko Ivanković",
     captain: "Wu Lei",
-    stats: { played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 1, goalsAgainst: 2, points: 0 },
+    stats: { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     form: ["L", "L", "W", "D", "L"],
     avgPossession: 42.4,
     passAccuracy: 74.8
