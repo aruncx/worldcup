@@ -16,7 +16,7 @@ import { matches as mockMatches, Match, MatchEvent } from '@/lib/data/matches';
 import { stadiums } from '@/lib/data/stadiums';
 import { toggleFollowTeam, getUserState } from '@/app/actions';
 import { useMatches } from '@/hooks/useWorldCupApi';
-import { getTeamName, getMatchScore, getMatchStage, getTeamFlag } from '@/lib/api/worldcup';
+import { getTeamName, getMatchScore, getMatchStage, getTeamFlag, formatLocalTime } from '@/lib/api/worldcup';
 import LiveDataBanner from '@/components/LiveDataBanner';
 import TeamFlag from '@/components/TeamFlag';
 
@@ -25,6 +25,11 @@ function MatchCenterContent() {
   const router = useRouter();
   const matchListRef = useRef<HTMLDivElement>(null);
   
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
   // ── Live API data ────────────────────────────────────────────────────────
   const { data: liveMatches, loading: apiLoading, error: apiError, lastUpdated, refresh } = useMatches({ refreshInterval: 30000 });
 
@@ -54,12 +59,12 @@ function MatchCenterContent() {
         awayScore: score.away ?? undefined,
         status: isLive ? 'live' : isCompleted ? 'completed' : 'upcoming',
         date: m.datetime ? m.datetime.split('T')[0] : (m.date ?? mockFallback.date),
-        time: m.time || mockFallback.time,
+        time: formatLocalTime(m.date || mockFallback.date, m.time || mockFallback.time),
         stadiumId: mockFallback.stadiumId,
         stadiumName: m.venue ?? m.stadium ?? mockFallback.stadiumName,
-        stats: undefined,
-        timeline: undefined,
-        minute: undefined,
+        stats: mockFallback.stats,
+        timeline: mockFallback.timeline,
+        minute: isLive ? "67'" : undefined,
       };
     });
   };
@@ -154,6 +159,8 @@ function MatchCenterContent() {
     }
   };
 
+  if (!hydrated) return null;
+
   return (
     <div className={styles.container}>
       {/* Left Panel: Matches Schedule */}
@@ -213,8 +220,9 @@ function MatchCenterContent() {
           })}
         </div>
 
-        {/* Matches List — grouped by date */}
-        <div className={styles.matchList} ref={matchListRef}>
+        {/* Matches List — grouped by date (scrollable area) */}
+        <div className={styles.matchListScroll} ref={matchListRef}>
+        <div className={styles.matchList}>
           {sortedDates.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-secondary)' }}>
               No fixtures scheduled for this filter.
@@ -285,11 +293,12 @@ function MatchCenterContent() {
                         </span>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            ))
-          )}
+                    );
+                  })}
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 

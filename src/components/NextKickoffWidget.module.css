@@ -1,0 +1,114 @@
+.widgetContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-primary); /* Dark navy matching the image */
+  padding: 2rem;
+  border-radius: 16px;
+  color: var(--text-primary);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.title {
+  color: #FBBF24; /* Yellowish gold */
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.matchup {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Flag needs to be larger than standard TeamFlag component usually is, so we rely on global scaling or inline if needed, but we'll scale here if it renders as an image/span */
+.team :global(.flag) {
+  width: 60px;
+  height: 40px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 2rem; /* If emoji */
+}
+
+.teamName {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.vs {
+  font-weight: 800;
+  color: #64748B;
+  font-size: 1.1rem;
+}
+
+.matchMeta {
+  color: #94A3B8;
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+}
+
+.timerContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.timeBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timeValue {
+  background: #0B162C; /* Darker card background for time */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  width: 70px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+}
+
+.timeLabel {
+  color: #94A3B8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.colon {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-top: -20px; /* Align with numbers, not labels */
+}
+
+.link {
+  color: #FBBF24;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #FCD34D;
+}

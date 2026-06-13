@@ -1,6 +1,6 @@
 .container {
   display: grid;
-  grid-template-columns: 1.1fr 1.9fr;
+  grid-template-columns: 1.5fr 1.5fr;
   gap: 2rem;
   height: calc(100vh - 120px);
   overflow: hidden;
@@ -19,8 +19,16 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
   padding-right: 0.5rem;
+}
+
+/* Match list scrollable area */
+.matchListScroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 0.25rem;
 }
 
 /* Stage Filters — horizontal scroll, never wraps */
@@ -28,10 +36,13 @@
   display: flex;
   gap: 0.5rem;
   overflow-x: auto;
+  overflow-y: visible;
   padding-bottom: 0.5rem;
   margin-bottom: 0.75rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  flex-shrink: 0;
+  min-height: 0;
 }
 
 .filterScroll::-webkit-scrollbar {
@@ -50,31 +61,42 @@
 }
 
 .filterBtn {
-  background: var(--card-bg);
-  border: 1px solid var(--glass-border);
-  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
   padding: 0.4rem 0.9rem;
   border-radius: 15px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
+  backdrop-filter: blur(4px);
+}
+
+.filterBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.5);
+  color: #00E5FF;
 }
 
 .filterBtnActive {
   background: var(--accent-gold);
   border-color: var(--accent-gold);
-  color: #000B1A;
+  color: #000000;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
 }
 
 .calendarScroll {
   display: flex;
   gap: 0.5rem;
   overflow-x: auto;
+  overflow-y: visible;
   padding-bottom: 0.75rem;
   margin-bottom: 1rem;
+  flex-shrink: 0;
+  min-height: 0;
 }
 
 .calendarScroll::-webkit-scrollbar {
@@ -85,20 +107,28 @@
   flex: 0 0 62px;
   padding: 0.5rem 0.25rem;
   border-radius: 10px;
-  border: 1px solid var(--card-border);
-  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
   transition: all 0.2s ease;
   gap: 1px;
+  backdrop-filter: blur(4px);
+}
+
+.dateCard:hover {
+  background: rgba(0, 229, 255, 0.1);
+  border-color: rgba(0, 229, 255, 0.5);
 }
 
 .dateCardActive {
-  background: linear-gradient(135deg, var(--accent-gold), rgba(212,175,55,0.7));
+  background: linear-gradient(135deg, var(--accent-gold), rgba(0, 180, 220, 0.8));
   border-color: var(--accent-gold);
-  color: #000B1A;
+  color: #000000;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
 }
 
 .dateDay {

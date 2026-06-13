@@ -21,6 +21,7 @@
   padding: 0.6rem 1.2rem;
   border-radius: 20px;
   width: 300px;
+  max-width: 100%;
 }
 
 .searchInput {
@@ -49,6 +50,9 @@
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .searchBox {
+    width: 100%;
   }
 }
 
@@ -247,4 +251,24 @@
 
 .statsVal {
   font-weight: 700;
+}
+
+/* Modal mobile responsiveness */
+@media (max-width: 640px) {
+  .modalContent {
+    padding: 1.25rem;
+    border-radius: 14px;
+  }
+  .modalHeader {
+    gap: 1rem;
+  }
+  .modalFlag {
+    font-size: 2.5rem;
+  }
+  .modalInfoTitle {
+    font-size: 1.4rem;
+  }
+  .modalMeta {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

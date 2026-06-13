@@ -202,3 +202,13 @@ export function getMatchStage(
   return fallback;
 }
 
+export function formatLocalTime(dateStr: string | undefined, timeStr: string | undefined): string {
+  if (!dateStr || !timeStr) return timeStr || '';
+  try {
+    const utcDate = new Date(`${dateStr}T${timeStr}:00Z`);
+    // Format as "h:MM AM/PM" in the user's local timezone
+    return new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit', hour12: true }).format(utcDate);
+  } catch (e) {
+    return timeStr;
+  }
+}
