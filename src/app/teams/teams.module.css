@@ -138,8 +138,9 @@
   z-index: 1000;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 1rem;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  overflow-y: auto;
 }
 
 .modalContent {
@@ -148,13 +149,14 @@
   border-radius: 20px;
   width: 100%;
   max-width: 700px;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-height: none;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
   padding: 2rem;
   position: relative;
   animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 2rem;
 }
+
 
 @keyframes modalPop {
   from { transform: scale(0.95); opacity: 0; }

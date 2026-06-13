@@ -8,11 +8,29 @@
 
 @media (max-width: 1024px) {
   .container {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+  .detailsPanel {
+    order: -1;
+    height: auto;
+    overflow: visible;
+    margin-bottom: 1.5rem;
+  }
+  .schedulePanel {
+    order: 1;
+    height: auto;
+    overflow: visible;
+    padding-right: 0;
+  }
+  .matchListScroll {
     height: auto;
     overflow: visible;
   }
 }
+
 
 /* Schedule Left Panel */
 .schedulePanel {

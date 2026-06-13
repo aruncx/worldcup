@@ -92,7 +92,7 @@ export default function Home() {
         </div>
 
         <div className={styles.heroButtons}>
-          <Link href="/matches">
+          <Link href="/matches?date=today">
             <button className={styles.primaryBtn}>Watch Live Scores</button>
           </Link>
           <Link href="/standings">

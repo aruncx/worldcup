@@ -50,9 +50,9 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     { name: 'Live', path: '/matches', icon: Tv },
     { name: 'Standings', path: '/standings', icon: Grid },
     { name: 'Knockout Bracket', path: '/knockout', icon: Compass },
-    { name: 'Host Stadiums', path: '/stadiums', icon: MapPin },
     { name: 'Teams', path: '/teams', icon: Users },
     { name: 'Players', path: '/players', icon: User },
+    { name: 'Host Stadiums', path: '/stadiums', icon: MapPin },
     { name: 'News', path: '/news', icon: Newspaper }
   ];
 

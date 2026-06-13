@@ -75,8 +75,27 @@ function MatchCenterContent() {
   
   // Filter States
   const [activeStageFilter, setActiveStageFilter] = useState<string>('All');
-  const [activeDateFilter, setActiveDateFilter] = useState<string>('All');
+  
+  const dateParam = searchParams.get('date');
+  const getInitialDate = () => {
+    if (dateParam === 'today') {
+      return new Date().toISOString().split('T')[0];
+    }
+    return dateParam || 'All';
+  };
+  const [activeDateFilter, setActiveDateFilter] = useState<string>(getInitialDate);
   const [followedTeams, setFollowedTeams] = useState<string[]>([]);
+
+  // Sync dateParam if it changes after mount
+  useEffect(() => {
+    if (dateParam) {
+      if (dateParam === 'today') {
+        setActiveDateFilter(new Date().toISOString().split('T')[0]);
+      } else {
+        setActiveDateFilter(dateParam);
+      }
+    }
+  }, [dateParam]);
 
   // Sync user state (followed teams)
   useEffect(() => {
