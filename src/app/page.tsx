@@ -97,57 +97,142 @@ export default function Home() {
         <div className={styles.matchWidget}>
           <div className={styles.widgetGrid}>
             {/* Render Live Matches if available */}
-            {liveMatches.length > 0 ? liveMatches.slice(0, 1).map((match, i) => (
-              <div key={`live-${i}`} className={styles.matchCard}>
-                <div className={styles.matchHeader}>
-                  <span style={{ color: 'var(--danger)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span className="status-live"></span> Live • {match.minute ? `${match.minute}'` : "45'"}
-                  </span>
-                  <span>{match.stage}{match.group ? ` • Group ${match.group}` : ''}</span>
-                </div>
-                <div className={styles.matchTeams}>
-                  <div className={styles.teamRow}>
-                    <div className={styles.teamInfo}>
-                      <TeamFlag flag={match.homeTeamFlag} name={match.homeTeamName} /> {match.homeTeamName}
+            {liveMatches.length > 0 ? liveMatches.slice(0, 1).map((match, i) => {
+              const targetDate = new Date(`${(match as any).date || '2026-06-13'}T${(match as any).time || '18:00'}:00Z`);
+              return (
+                <div key={`live-${i}`} className={styles.matchCard}>
+                  <div className={styles.matchHeader}>
+                    <div className={styles.headerCol}>
+                      <span className={styles.statusLiveText}>
+                        <span className="status-live"></span> LIVE •
+                      </span>
+                      <span className={styles.headerTimeLive}>{match.minute ? `${match.minute}'` : "45'"}</span>
                     </div>
-                    <div className={styles.teamScore}>{match.homeScore ?? 0}</div>
-                  </div>
-                  <div className={styles.teamRow}>
-                    <div className={styles.teamInfo}>
-                      <TeamFlag flag={match.awayTeamFlag} name={match.awayTeamName} /> {match.awayTeamName}
+                    <div className={styles.headerCol}>
+                      <span className={styles.stageText}>{match.stage} •</span>
+                      <span className={styles.groupText}>{match.group ? `Group ${match.group}` : 'TBD'}</span>
                     </div>
-                    <div className={styles.teamScore} style={{ color: 'var(--text-primary)' }}>{match.awayScore ?? 0}</div>
                   </div>
+                  <div className={styles.matchTeams}>
+                    <div className={styles.teamRow}>
+                      <div className={styles.teamInfo}>
+                        <TeamFlag flag={match.homeTeamFlag} name={match.homeTeamName} /> {match.homeTeamName}
+                      </div>
+                      <div className={styles.teamScore}>{match.homeScore ?? 0}</div>
+                    </div>
+                    <div className={styles.teamRow}>
+                      <div className={styles.teamInfo}>
+                        <TeamFlag flag={match.awayTeamFlag} name={match.awayTeamName} /> {match.awayTeamName}
+                      </div>
+                      <div className={styles.teamScore} style={{ color: 'var(--text-primary)' }}>{match.awayScore ?? 0}</div>
+                    </div>
+                  </div>
+                  <MatchCountdown targetDate={targetDate} status="live" />
                 </div>
-              </div>
-            )) : null}
+              );
+            }) : null}
 
             {/* Render Upcoming Matches (Fill up to 3 cards total) */}
-            {upcomingMatches.slice(0, liveMatches.length > 0 ? 2 : 3).map((match, i) => (
-              <div key={`upcoming-${i}`} className={styles.matchCard}>
-                <div className={styles.matchHeader}>
-                  <span style={{ color: 'var(--accent-primary)' }}>Upcoming • {match.time}</span>
-                  <span>{match.stage}{match.group ? ` • Group ${match.group}` : ''}</span>
-                </div>
-                <div className={styles.matchTeams}>
-                  <div className={styles.teamRow}>
-                    <div className={styles.teamInfo}>
-                      <TeamFlag flag={match.homeTeamFlag} name={match.homeTeamName} /> {match.homeTeamName}
+            {upcomingMatches.slice(0, liveMatches.length > 0 ? 2 : 3).map((match, i) => {
+              const targetDate = new Date(`${(match as any).date}T${(match as any).time}:00Z`);
+              return (
+                <div key={`upcoming-${i}`} className={styles.matchCard}>
+                  <div className={styles.matchHeader}>
+                    <div className={styles.headerCol}>
+                      <span className={styles.statusUpcomingText}>
+                        UPCOMING •
+                      </span>
+                      <span className={styles.headerTimeUpcoming}>{match.time}</span>
                     </div>
-                    <div className={styles.teamScore} style={{ color: 'var(--text-secondary)' }}>-</div>
-                  </div>
-                  <div className={styles.teamRow}>
-                    <div className={styles.teamInfo}>
-                      <TeamFlag flag={match.awayTeamFlag} name={match.awayTeamName} /> {match.awayTeamName}
+                    <div className={styles.headerCol}>
+                      <span className={styles.stageText}>{match.stage} •</span>
+                      <span className={styles.groupText}>{match.group ? `Group ${match.group}` : 'TBD'}</span>
                     </div>
-                    <div className={styles.teamScore} style={{ color: 'var(--text-secondary)' }}>-</div>
                   </div>
+                  <div className={styles.matchTeams}>
+                    <div className={styles.teamRow}>
+                      <div className={styles.teamInfo}>
+                        <TeamFlag flag={match.homeTeamFlag} name={match.homeTeamName} /> {match.homeTeamName}
+                      </div>
+                      <div className={styles.teamScore} style={{ color: 'var(--text-secondary)' }}>-</div>
+                    </div>
+                    <div className={styles.teamRow}>
+                      <div className={styles.teamInfo}>
+                        <TeamFlag flag={match.awayTeamFlag} name={match.awayTeamName} /> {match.awayTeamName}
+                      </div>
+                      <div className={styles.teamScore} style={{ color: 'var(--text-secondary)' }}>-</div>
+                    </div>
+                  </div>
+                  <MatchCountdown targetDate={targetDate} status="upcoming" />
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </motion.div>
     </div>
   );
 }
+
+interface CountdownProps {
+  targetDate: Date;
+  status: 'live' | 'upcoming';
+}
+
+function MatchCountdown({ targetDate, status }: CountdownProps) {
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const calculateTime = () => {
+      const now = new Date();
+      let diff = 0;
+
+      if (status === 'upcoming') {
+        diff = targetDate.getTime() - now.getTime();
+      } else {
+        // Live match countdown to full time (approx 105 mins from start)
+        const endTime = new Date(targetDate.getTime() + 105 * 60 * 1000);
+        diff = endTime.getTime() - now.getTime();
+      }
+
+      if (diff <= 0) {
+        setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      setTimeLeft({ hours, minutes, seconds });
+    };
+
+    calculateTime();
+    const interval = setInterval(calculateTime, 1000);
+    return () => clearInterval(interval);
+  }, [targetDate, status]);
+
+  const pad = (num: number) => String(num).padStart(2, '0');
+
+  return (
+    <div className={styles.countdownContainer}>
+      <div className={styles.countdownTime}>
+        <div className={styles.countdownBox}>
+          <span className={styles.countdownNum}>{pad(timeLeft.hours)}</span>
+          <span className={styles.countdownLabel}>HOURS</span>
+        </div>
+        <span className={styles.countdownColon}>:</span>
+        <div className={styles.countdownBox}>
+          <span className={styles.countdownNum}>{pad(timeLeft.minutes)}</span>
+          <span className={styles.countdownLabel}>MINS</span>
+        </div>
+        <span className={styles.countdownColon}>:</span>
+        <div className={styles.countdownBox}>
+          <span className={styles.countdownNum}>{pad(timeLeft.seconds)}</span>
+          <span className={styles.countdownLabel}>SECS</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
