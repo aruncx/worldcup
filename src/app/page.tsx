@@ -21,6 +21,8 @@ export default function Home() {
     const score = getMatchScore(m);
     const isLive = m.status === 'in_progress' || m.status === 'live';
     const isCompleted = m.status === 'completed' || m.status === 'finished';
+    const rawDate = m.date || mock.date;
+    const rawTime = m.time || mock.time;
     return {
       id: String(m.id),
       stage: (m.stage ? (m.stage.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase())) : mock.stage) as any,
@@ -32,10 +34,15 @@ export default function Home() {
       homeScore: score.home,
       awayScore: score.away,
       status: isLive ? 'live' as const : isCompleted ? 'completed' as const : 'upcoming' as const,
-      time: formatLocalTime(m.date || mock.date, m.time || mock.time),
+      time: formatLocalTime(rawDate, rawTime),
+      kickoffTime: new Date(`${rawDate}T${rawTime}:00Z`),
       minute: isLive ? 67 : undefined,
     };
-  }) : mockMatches;
+  }) : mockMatches.map(m => ({
+    ...m,
+    kickoffTime: new Date(`${m.date}T${m.time}:00Z`),
+    time: formatLocalTime(m.date, m.time),
+  }));
 
   const liveMatches = matches.filter(m => m.status === 'live');
   const upcomingMatches = matches.filter(m => m.status === 'upcoming');
@@ -98,7 +105,6 @@ export default function Home() {
           <div className={styles.widgetGrid}>
             {/* Render Live Matches if available */}
             {liveMatches.length > 0 ? liveMatches.slice(0, 1).map((match, i) => {
-              const targetDate = new Date(`${(match as any).date || '2026-06-13'}T${(match as any).time || '18:00'}:00Z`);
               return (
                 <div key={`live-${i}`} className={styles.matchCard}>
                   <div className={styles.matchHeader}>
@@ -127,14 +133,13 @@ export default function Home() {
                       <div className={styles.teamScore} style={{ color: 'var(--text-primary)' }}>{match.awayScore ?? 0}</div>
                     </div>
                   </div>
-                  <MatchCountdown targetDate={targetDate} status="live" />
+                  <MatchCountdown targetDate={(match as any).kickoffTime} status="live" />
                 </div>
               );
             }) : null}
 
             {/* Render Upcoming Matches (Fill up to 3 cards total) */}
             {upcomingMatches.slice(0, liveMatches.length > 0 ? 2 : 3).map((match, i) => {
-              const targetDate = new Date(`${(match as any).date}T${(match as any).time}:00Z`);
               return (
                 <div key={`upcoming-${i}`} className={styles.matchCard}>
                   <div className={styles.matchHeader}>
@@ -163,7 +168,7 @@ export default function Home() {
                       <div className={styles.teamScore} style={{ color: 'var(--text-secondary)' }}>-</div>
                     </div>
                   </div>
-                  <MatchCountdown targetDate={targetDate} status="upcoming" />
+                  <MatchCountdown targetDate={(match as any).kickoffTime} status="upcoming" />
                 </div>
               );
             })}
