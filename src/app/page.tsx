@@ -23,7 +23,8 @@ export default function Home() {
     const isCompleted = m.status === 'completed' || m.status === 'finished';
     return {
       id: String(m.id),
-      stage: (m.stage ? (m.stage.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())) : mock.stage) as any,
+      stage: (m.stage ? (m.stage.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase())) : mock.stage) as any,
+      group: m.group ? m.group.replace(/^GROUP_/, '') : mock.group,
       homeTeamName: getTeamName(m.home_team),
       awayTeamName: getTeamName(m.away_team),
       homeTeamFlag: getTeamFlag(m.home_team) || mock.homeTeamFlag,
@@ -32,7 +33,7 @@ export default function Home() {
       awayScore: score.away,
       status: isLive ? 'live' as const : isCompleted ? 'completed' as const : 'upcoming' as const,
       time: formatLocalTime(m.date || mock.date, m.time || mock.time),
-      minute: isLive ? "67'" : undefined, // Mocked live minute for demo
+      minute: isLive ? 67 : undefined,
     };
   }) : mockMatches;
 
@@ -100,9 +101,9 @@ export default function Home() {
               <div key={`live-${i}`} className={styles.matchCard}>
                 <div className={styles.matchHeader}>
                   <span style={{ color: 'var(--danger)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span className="status-live"></span> Live • {match.minute || "45'"}
+                    <span className="status-live"></span> Live • {match.minute ? `${match.minute}'` : "45'"}
                   </span>
-                  <span>{match.stage || match.group}</span>
+                  <span>{match.stage}{match.group ? ` • Group ${match.group}` : ''}</span>
                 </div>
                 <div className={styles.matchTeams}>
                   <div className={styles.teamRow}>
@@ -126,7 +127,7 @@ export default function Home() {
               <div key={`upcoming-${i}`} className={styles.matchCard}>
                 <div className={styles.matchHeader}>
                   <span style={{ color: 'var(--accent-primary)' }}>Upcoming • {match.time}</span>
-                  <span>{match.stage || match.group}</span>
+                  <span>{match.stage}{match.group ? ` • Group ${match.group}` : ''}</span>
                 </div>
                 <div className={styles.matchTeams}>
                   <div className={styles.teamRow}>

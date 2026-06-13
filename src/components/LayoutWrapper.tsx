@@ -28,17 +28,17 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   // Dynamic Live Matches Count
   const { data: apiMatches } = useMatches({ refreshInterval: 45000 });
   
-  const currentMatches = apiMatches ?? matches;
-  const liveCount = currentMatches.filter(m => m.status === 'live' || m.status === 'in_progress').length;
+  const currentMatches = (apiMatches ?? matches) as any[];
+  const liveCount = currentMatches.filter((m: any) => m.status === 'live' || m.status === 'in_progress').length;
   
-  const liveMatchesList = currentMatches.filter(m => m.status === 'live' || m.status === 'in_progress');
-  const upcomingMatchesList = currentMatches.filter(m => m.status === 'upcoming' || m.status === 'future').slice(0, 3);
-  const completedMatchesList = currentMatches.filter(m => m.status === 'completed' || m.status === 'finished').slice(-3).reverse();
+  const liveMatchesList = currentMatches.filter((m: any) => m.status === 'live' || m.status === 'in_progress');
+  const upcomingMatchesList = currentMatches.filter((m: any) => m.status === 'upcoming' || m.status === 'future').slice(0, 3);
+  const completedMatchesList = currentMatches.filter((m: any) => m.status === 'completed' || m.status === 'finished').slice(-3).reverse();
 
   // Extract the latest timeline event for any live match (if available in mock data)
   const liveEvents = liveMatchesList.flatMap(m => {
     const mockFallback = matches.find(mock => String(mock.id) === String(m.id)) || m;
-    const timeline = mockFallback.timeline || [];
+    const timeline = (mockFallback as any).timeline || [];
     if (timeline.length > 0) {
       return { match: m, event: timeline[timeline.length - 1] };
     }
