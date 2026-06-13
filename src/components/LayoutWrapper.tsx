@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
@@ -94,108 +94,95 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     localStorage.setItem('wcup_theme', nextTheme);
   };
 
-  // Load initial notifications & run real-time match alerts simulator
+  // Match alerts are computed dynamically below from the live API data stream. No static dummy alerts or simulated events are loaded.
+
+  const prevMatchesRef = useRef<any[] | null>(null);
+
+  // Monitor live API matches and trigger notifications on goal events, kickoffs, or full-time
   useEffect(() => {
-    setNotifications([
-      {
-        id: 'n1',
-        type: 'goal',
-        title: 'GOAL! USA 3 - 1 Iraq',
-        desc: 'Folarin Balogun scores in the 82nd minute, assisted by Giovanni Reyna.',
-        time: '2h ago',
-        live: false,
-      },
-      {
-        id: 'n2',
-        type: 'card',
-        title: 'YELLOW CARD - Weston McKennie (USA)',
-        desc: 'Weston McKennie cautioned in the 75th minute for a tactical foul.',
-        time: '2h ago',
-        live: false,
-      },
-      {
-        id: 'n3',
-        type: 'goal',
-        title: 'GOAL! USA 2 - 1 Iraq',
-        desc: 'Aymen Hussein pulls one back for Iraq in the 68th minute.',
-        time: '2h ago',
-        live: false,
-      },
-      {
-        id: 'n4',
-        type: 'var',
-        title: 'VAR DECISION - Penalty Awarded (USA)',
-        desc: 'VAR review confirms a foul in the box on Christian Pulisic. Penalty awarded.',
-        time: '3h ago',
-        live: false,
-      },
-    ]);
+    if (!apiMatches || apiMatches.length === 0) return;
 
-    let eventIndex = 0;
-    const simulatedEventsList = [
-      {
-        type: 'goal' as const,
-        title: 'GOAL! Mexico 1 - 0 Saudi Arabia',
-        desc: 'Santiago Giménez scores a stunning header from a corner kick! (34\')',
-      },
-      {
-        type: 'card' as const,
-        title: 'YELLOW CARD - Ali Al-Bulayhi (Saudi Arabia)',
-        desc: 'Cautioned for a late challenge on Hirving Lozano. (41\')',
-      },
-      {
-        type: 'var' as const,
-        title: 'VAR REVIEW - Penalty Review (Mexico)',
-        desc: 'VAR check confirms a penalty for handball in the box. (56\')',
-      },
-      {
-        type: 'goal' as const,
-        title: 'GOAL! Cameroon 1 - 0 Slovakia',
-        desc: 'Vincent Aboubakar converts from close range after a defensive error! (62\')',
-      },
-      {
-        type: 'card' as const,
-        title: 'RED CARD - Milan Škriniar (Slovakia)',
-        desc: 'Dismissed after receiving a second yellow card for a dangerous tackle. (78\')',
-      },
-      {
-        type: 'goal' as const,
-        title: 'GOAL! Cameroon 2 - 0 Slovakia',
-        desc: 'Bryan Mbeumo seals the victory with a counter-attack strike! (89\')',
-      },
-    ];
+    // First load: cache initial API response state
+    if (!prevMatchesRef.current) {
+      prevMatchesRef.current = apiMatches;
+      return;
+    }
 
-    // Trigger a simulated live alert every 45 seconds
-    const interval = setInterval(() => {
-      if (eventIndex >= simulatedEventsList.length) {
-        clearInterval(interval);
-        return;
+    const prevMatches = prevMatchesRef.current;
+    const newNotifications: Notification[] = [];
+
+    apiMatches.forEach((match: any) => {
+      const prevMatch = prevMatches.find((m: any) => String(m.id) === String(match.id));
+      if (!prevMatch) return;
+
+      const homeName = match.home_team?.name || 'Home Team';
+      const awayName = match.away_team?.name || 'Away Team';
+      const homeScore = match.home_score ?? 0;
+      const awayScore = match.away_score ?? 0;
+      const prevHomeScore = prevMatch.home_score ?? 0;
+      const prevAwayScore = prevMatch.away_score ?? 0;
+
+      const wasLive = prevMatch.status === 'live';
+      const isLive = match.status === 'live';
+      const wasCompleted = prevMatch.status === 'completed';
+      const isCompleted = match.status === 'completed';
+
+      // 1. Kickoff Notification
+      if (!wasLive && isLive) {
+        newNotifications.push({
+          id: `live-kickoff-${match.id}-${Date.now()}`,
+          type: 'system',
+          title: 'KICKOFF ALERT!',
+          desc: `${homeName} vs ${awayName} has officially kicked off!`,
+          time: 'Just now',
+          live: true
+        });
       }
 
-      const rawEvent = simulatedEventsList[eventIndex];
-      const newNotif: Notification = {
-        id: `sim-${Date.now()}`,
-        type: rawEvent.type,
-        title: rawEvent.title,
-        desc: rawEvent.desc,
-        time: 'Just now',
-        live: true,
-      };
+      // 2. Goal Notification
+      if (isLive && (homeScore > prevHomeScore || awayScore > prevAwayScore)) {
+        const scorer = homeScore > prevHomeScore ? homeName : awayName;
+        newNotifications.push({
+          id: `live-goal-${match.id}-${homeScore}-${awayScore}-${Date.now()}`,
+          type: 'goal',
+          title: `GOAL ALERT! ${homeName} ${homeScore} - ${awayScore} ${awayName}`,
+          desc: `Goal for ${scorer}! The score is now ${homeName} ${homeScore}, ${awayName} ${awayScore}.`,
+          time: 'Just now',
+          live: true
+        });
+      }
 
-      setNotifications(prev => [newNotif, ...prev]);
-      setUnreadNotifs(prev => prev + 1);
-      setActiveToast(newNotif);
+      // 3. Full Time Notification
+      if (!wasCompleted && isCompleted) {
+        newNotifications.push({
+          id: `live-ft-${match.id}-${Date.now()}`,
+          type: 'system',
+          title: 'FULL TIME ALERT!',
+          desc: `Full Time: ${homeName} ${homeScore} - ${awayScore} ${awayName}. The match has ended.`,
+          time: 'Just now',
+          live: true
+        });
+      }
+    });
+
+    if (newNotifications.length > 0) {
+      setNotifications(prev => [...newNotifications, ...prev]);
+      setUnreadNotifs(prev => prev + newNotifications.length);
+      setActiveToast(newNotifications[0]);
       
       // Auto-clear active toast after 6 seconds
       setTimeout(() => {
-        setActiveToast(curr => curr?.id === newNotif.id ? null : curr);
+        setActiveToast(curr => {
+          if (curr && newNotifications.some(n => n.id === curr.id)) {
+            return null;
+          }
+          return curr;
+        });
       }, 6000);
+    }
 
-      eventIndex++;
-    }, 45000);
-
-    return () => clearInterval(interval);
-  }, []);
+    prevMatchesRef.current = apiMatches;
+  }, [apiMatches]);
 
   // Keyboard shortcut to open search (Ctrl + K or Cmd + K)
   useEffect(() => {

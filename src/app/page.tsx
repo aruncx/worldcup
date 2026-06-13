@@ -110,7 +110,7 @@ export default function Home() {
   // Compute Tournament Stats dynamically
   const playedMatches = matches.filter(m => m.status === 'completed').length;
   
-  // Total goals scored
+  // Total goals scored from real match scores
   const totalGoals = matches.reduce((acc, m) => {
     if (m.status === 'completed' || m.status === 'live') {
       return acc + (m.homeScore || 0) + (m.awayScore || 0);
@@ -118,20 +118,52 @@ export default function Home() {
     return acc;
   }, 0);
 
-  // Total cards
-  const totalYellows = matches.reduce((acc, m) => acc + (m.stats?.yellowCards[0] || 0) + (m.stats?.yellowCards[1] || 0), 0) + 12;
-  const totalReds = matches.reduce((acc, m) => acc + (m.stats?.redCards[0] || 0) + (m.stats?.redCards[1] || 0), 0);
-  
-  // Clean sheets
+  // Cards: sum from match stats timelines where available
+  const totalYellows = mockMatches.reduce((acc, m) =>
+    acc + (m.stats?.yellowCards[0] || 0) + (m.stats?.yellowCards[1] || 0), 0
+  );
+  const totalReds = mockMatches.reduce((acc, m) =>
+    acc + (m.stats?.redCards[0] || 0) + (m.stats?.redCards[1] || 0), 0
+  );
+
+  // Clean sheets: teams that conceded 0 in completed matches
   const totalCleanSheets = matches.reduce((acc, m) => {
     if (m.status === 'completed') {
       let count = 0;
-      if (m.homeScore === 0) count++;
-      if (m.awayScore === 0) count++;
+      if ((m.homeScore ?? 1) === 0) count++;
+      if ((m.awayScore ?? 1) === 0) count++;
       return acc + count;
     }
     return acc;
-  }, 0) + 5;
+  }, 0);
+
+  // ── Award leaders — derived live from players data ────────────────────────
+  // Top Scorer: most goals
+  const topScorer = [...players].sort((a, b) =>
+    b.stats.goals - a.stats.goals ||
+    b.stats.assists - a.stats.assists
+  )[0];
+
+  // Top Assists: most assists
+  const topAssist = [...players].sort((a, b) =>
+    b.stats.assists - a.stats.assists ||
+    b.stats.goals - a.stats.goals
+  )[0];
+
+  // Best GK: most saves among goalkeepers
+  const bestGK = [...players]
+    .filter(p => p.position === 'Goalkeeper')
+    .sort((a, b) => b.stats.saves - a.stats.saves)[0];
+
+  // Clean sheets for best GK (count matches where their team kept a clean sheet)
+  const gkCleanSheets = matches.filter(m => {
+    if (m.status !== 'completed') return false;
+    const teamId = bestGK?.nationality ?? '';
+    return (
+      (m.homeTeamId === teamId && (m.awayScore ?? 1) === 0) ||
+      (m.awayTeamId === teamId && (m.homeScore ?? 1) === 0)
+    );
+  }).length;
 
 
   return (
@@ -173,12 +205,17 @@ export default function Home() {
           <span className={styles.countdownTitle}>Next Scheduled Kickoff</span>
           {nextMatch ? (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
-                <TeamFlag flag={nextMatch.homeTeamFlag} name={nextMatch.homeTeamName} style={{ fontSize: '1.2rem' }} />
-                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>
-                  {nextMatch.homeTeamName} vs {nextMatch.awayTeamName}
-                </span>
-                <TeamFlag flag={nextMatch.awayTeamFlag} name={nextMatch.awayTeamName} style={{ fontSize: '1.2rem' }} />
+              {/* Team names with large prominent flags */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                  <TeamFlag flag={nextMatch.homeTeamFlag} name={nextMatch.homeTeamName} size={40} />
+                  <span style={{ fontWeight: 700, fontSize: '0.85rem', textAlign: 'center' }}>{nextMatch.homeTeamName}</span>
+                </div>
+                <span style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-muted)', padding: '0 4px' }}>vs</span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                  <TeamFlag flag={nextMatch.awayTeamFlag} name={nextMatch.awayTeamName} size={40} />
+                  <span style={{ fontWeight: 700, fontSize: '0.85rem', textAlign: 'center' }}>{nextMatch.awayTeamName}</span>
+                </div>
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
                 {nextMatch.stage} {nextMatch.group ? `• Group ${nextMatch.group}` : ''} • {nextMatch.stadiumName}
@@ -281,34 +318,46 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Leaders cards */}
+        {/* Award leaders — dynamically derived from player stats */}
         <div className={styles.leadersRow}>
-          <div className={`${styles.leaderCard} glass-card`}>
-            <div className={styles.leaderAvatar}>🥇</div>
-            <div className={styles.leaderInfo}>
-              <div className={styles.leaderCategory}>Top Scorer (Golden Boot)</div>
-              <div className={styles.leaderName}>Kylian Mbappé</div>
-              <div className={styles.leaderDetails}>🇫🇷 France • 3 Goals • 1 Assist</div>
+          {topScorer && (
+            <div className={`${styles.leaderCard} glass-card`}>
+              <div className={styles.leaderAvatar}>🥇</div>
+              <div className={styles.leaderInfo}>
+                <div className={styles.leaderCategory}>Top Scorer (Golden Boot)</div>
+                <div className={styles.leaderName}>{topScorer.name}</div>
+                <div className={styles.leaderDetails}>
+                  {topScorer.teamFlag} {topScorer.teamName} • {topScorer.stats.goals} Goals • {topScorer.stats.assists} Assists
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className={`${styles.leaderCard} glass-card`}>
-            <div className={styles.leaderAvatar}>🪄</div>
-            <div className={styles.leaderInfo}>
-              <div className={styles.leaderCategory}>Top Assists (Playmaker)</div>
-              <div className={styles.leaderName}>Jude Bellingham</div>
-              <div className={styles.leaderDetails}>🏴󠁧󠁢󠁥󠁮󠁧󠁿 England • 2 Assists • 1 Goal</div>
+          {topAssist && (
+            <div className={`${styles.leaderCard} glass-card`}>
+              <div className={styles.leaderAvatar}>🪄</div>
+              <div className={styles.leaderInfo}>
+                <div className={styles.leaderCategory}>Top Assists (Playmaker)</div>
+                <div className={styles.leaderName}>{topAssist.name}</div>
+                <div className={styles.leaderDetails}>
+                  {topAssist.teamFlag} {topAssist.teamName} • {topAssist.stats.assists} Assists • {topAssist.stats.goals} Goals
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className={`${styles.leaderCard} glass-card`}>
-            <div className={styles.leaderAvatar}>🧤</div>
-            <div className={styles.leaderInfo}>
-              <div className={styles.leaderCategory}>Best Goalkeeper (Golden Glove)</div>
-              <div className={styles.leaderName}>Ronwen Williams</div>
-              <div className={styles.leaderDetails}>🇿🇦 South Africa • 6 Saves • 1 Clean Sheet</div>
+          {bestGK && (
+            <div className={`${styles.leaderCard} glass-card`}>
+              <div className={styles.leaderAvatar}>🧤</div>
+              <div className={styles.leaderInfo}>
+                <div className={styles.leaderCategory}>Best Goalkeeper (Golden Glove)</div>
+                <div className={styles.leaderName}>{bestGK.name}</div>
+                <div className={styles.leaderDetails}>
+                  {bestGK.teamFlag} {bestGK.teamName} • {bestGK.stats.saves} Saves • {gkCleanSheets} Clean Sheet{gkCleanSheets !== 1 ? 's' : ''}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -328,7 +377,7 @@ export default function Home() {
             {liveMatches.map(m => (
               <Link href={`/matches?id=${m.id}`} key={m.id} className={`${styles.matchMiniCard} glass-card`} style={{ borderLeft: '4px solid var(--accent-red)' }}>
                 <div className={styles.matchTeam}>
-                  <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} style={{ marginRight: '8px' }} />
+                  <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} size={28} style={{ marginRight: '8px' }} />
                   <span style={{ fontWeight: 600 }}>{m.homeTeamName}</span>
                 </div>
                 <div className={styles.matchScoreArea}>
@@ -343,7 +392,7 @@ export default function Home() {
                 </div>
                 <div className={`${styles.matchTeam} styles.matchTeamRight`} style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end' }}>
                   <span style={{ fontWeight: 600 }}>{m.awayTeamName}</span>
-                  <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} style={{ marginLeft: '8px' }} />
+                  <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} size={28} style={{ marginLeft: '8px' }} />
                 </div>
               </Link>
             ))}
@@ -352,7 +401,7 @@ export default function Home() {
             {completedMatches.map(m => (
               <Link href={`/matches?id=${m.id}`} key={m.id} className={`${styles.matchMiniCard} glass-card`}>
                 <div className={styles.matchTeam}>
-                  <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} style={{ marginRight: '8px' }} />
+                  <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} size={28} style={{ marginRight: '8px' }} />
                   <span>{m.homeTeamName}</span>
                 </div>
                 <div className={styles.matchScoreArea}>
@@ -365,7 +414,7 @@ export default function Home() {
                 </div>
                 <div className={`${styles.matchTeam} styles.matchTeamRight`} style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end' }}>
                   <span>{m.awayTeamName}</span>
-                  <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} style={{ marginLeft: '8px' }} />
+                  <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} size={28} style={{ marginLeft: '8px' }} />
                 </div>
               </Link>
             ))}

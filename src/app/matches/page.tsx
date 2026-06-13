@@ -1,33 +1,29 @@
 'use client'
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   Tv, 
   MapPin, 
   Clock, 
-  Calendar, 
-  Share2, 
+  Calendar,
   Activity, 
-  TrendingUp, 
-  AlertCircle,
-  Award,
   ChevronRight,
-  Sparkles
 } from 'lucide-react';
 import styles from './matches.module.css';
 import { matches as mockMatches, Match, MatchEvent } from '@/lib/data/matches';
 import { stadiums } from '@/lib/data/stadiums';
 import { toggleFollowTeam, getUserState } from '@/app/actions';
 import { useMatches } from '@/hooks/useWorldCupApi';
-import { getTeamName, getMatchScore, getLiveMatches, getCompletedMatches, getUpcomingMatches, getMatchStage, getTeamFlag } from '@/lib/api/worldcup';
+import { getTeamName, getMatchScore, getMatchStage, getTeamFlag } from '@/lib/api/worldcup';
 import LiveDataBanner from '@/components/LiveDataBanner';
 import TeamFlag from '@/components/TeamFlag';
 
 function MatchCenterContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const matchListRef = useRef<HTMLDivElement>(null);
   
   // ── Live API data ────────────────────────────────────────────────────────
   const { data: liveMatches, loading: apiLoading, error: apiError, lastUpdated, refresh } = useMatches({ refreshInterval: 30000 });
@@ -61,7 +57,6 @@ function MatchCenterContent() {
         time: m.time || mockFallback.time,
         stadiumId: mockFallback.stadiumId,
         stadiumName: m.venue ?? m.stadium ?? mockFallback.stadiumName,
-        // Clean up live mock data fields to avoid leaking mock content into API data
         stats: undefined,
         timeline: undefined,
         minute: undefined,
@@ -78,7 +73,6 @@ function MatchCenterContent() {
   const [activeStageFilter, setActiveStageFilter] = useState<string>('All');
   const [activeDateFilter, setActiveDateFilter] = useState<string>('All');
   const [followedTeams, setFollowedTeams] = useState<string[]>([]);
-  const [isFollowingSelected, setIsFollowingSelected] = useState(false);
 
   // Sync user state (followed teams)
   useEffect(() => {
@@ -89,27 +83,32 @@ function MatchCenterContent() {
     syncState();
   }, []);
 
-  // Filter Match list
-  const stages = ['All', 'Group Stage', 'Round of 32', 'Round of 16', 'Quarter Finals', 'Semi Finals', 'Final'];
-  const dates = ['All', '2026-06-11', '2026-06-12', '2026-06-13', '2026-06-14', '2026-06-15', '2026-06-16'];
+  // Derive all unique dates from matches (sorted)
+  const allDates = Array.from(new Set(matches.map(m => m.date))).sort();
 
-  const filteredMatches = matches.filter(m => {
-    const matchStage = activeStageFilter === 'All' || m.stage === activeStageFilter;
-    const matchDate = activeDateFilter === 'All' || m.date === activeDateFilter;
-    return matchStage && matchDate;
+  const stages = ['All', 'Group Stage', 'Round of 32', 'Round of 16', 'Quarter Finals', 'Semi Finals', 'Final'];
+
+  // Apply stage filter; date filter is used to highlight/jump, not restrict
+  const stageFiltered = matches.filter(m =>
+    activeStageFilter === 'All' || m.stage === activeStageFilter
+  );
+
+  // When date filter changes, also apply it to narrow the list
+  const filteredMatches = stageFiltered.filter(m =>
+    activeDateFilter === 'All' || m.date === activeDateFilter
+  );
+
+  // Group filtered matches by date
+  const groupedByDate: Record<string, Match[]> = {};
+  filteredMatches.forEach(m => {
+    if (!groupedByDate[m.date]) groupedByDate[m.date] = [];
+    groupedByDate[m.date].push(m);
   });
+  const sortedDates = Object.keys(groupedByDate).sort();
 
   // Selected Match State
   const defaultSelectedMatch = matches.find(m => m.status === 'live') || filteredMatches[0] || matches[0];
   const activeMatch = matches.find(m => m.id === selectedIdFromUrl) || defaultSelectedMatch;
-
-  // Sync follow state for active match home/away teams
-  useEffect(() => {
-    if (activeMatch) {
-      const isFollowing = followedTeams.includes(activeMatch.homeTeamId) || followedTeams.includes(activeMatch.awayTeamId);
-      setIsFollowingSelected(isFollowing);
-    }
-  }, [activeMatch, followedTeams]);
 
   // Handle Match Click
   const handleMatchSelect = (id: string) => {
@@ -126,6 +125,20 @@ function MatchCenterContent() {
         res.isFollowing ? [...prev, teamId] : prev.filter(t => t !== teamId)
       );
     }
+  };
+
+  // Format date for section headers
+  const formatDateHeader = (dateStr: string) => {
+    const d = new Date(dateStr + 'T00:00:00');
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    const tomorrowStr = new Date(today.getTime() + 86400000).toISOString().split('T')[0];
+    
+    let prefix = '';
+    if (dateStr === todayStr) prefix = 'Today · ';
+    else if (dateStr === tomorrowStr) prefix = 'Tomorrow · ';
+
+    return prefix + d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   };
 
   // Helper to map event icons
@@ -147,8 +160,9 @@ function MatchCenterContent() {
       <div className={styles.schedulePanel}>
         {/* Live Data Status */}
         <LiveDataBanner lastUpdated={lastUpdated} loading={apiLoading} error={apiError} onRefresh={refresh} />
-        {/* Stage Filters */}
-        <div className={styles.filterSection}>
+
+        {/* Stage Filters — horizontal scroll strip */}
+        <div className={styles.filterScroll}>
           {stages.map(stage => (
             <button 
               key={stage} 
@@ -160,91 +174,121 @@ function MatchCenterContent() {
           ))}
         </div>
 
-        {/* Calendar Slider */}
+        {/* Calendar Date Strip — dynamically from match dates */}
         <div className={styles.calendarScroll}>
-          {dates.map(date => {
-            const dateObj = new Date(date + 'T00:00:00');
-            const dayName = date === 'All' ? 'ALL' : dateObj.toLocaleDateString('en-US', { weekday: 'short' });
-            const dayNum = date === 'All' ? 'DAYS' : dateObj.getDate();
+          {/* "All" pill */}
+          <div
+            className={`${styles.dateCard} ${activeDateFilter === 'All' ? styles.dateCardActive : ''}`}
+            onClick={() => setActiveDateFilter('All')}
+          >
+            <span className={styles.dateDay}>ALL</span>
+            <span className={styles.dateNum}>—</span>
+          </div>
+          {allDates.map(date => {
+            const d = new Date(date + 'T00:00:00');
+            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+            const dayNum = d.getDate();
+            const monthShort = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+            const hasLive = matches.some(m => m.date === date && m.status === 'live');
             const isActive = activeDateFilter === date;
-            
             return (
               <div 
                 key={date} 
                 className={`${styles.dateCard} ${isActive ? styles.dateCardActive : ''}`}
                 onClick={() => setActiveDateFilter(date)}
+                style={{ position: 'relative' }}
               >
+                {hasLive && (
+                  <span style={{
+                    position: 'absolute', top: 4, right: 6,
+                    width: 6, height: 6, borderRadius: '50%',
+                    background: 'var(--accent-red)', boxShadow: '0 0 4px var(--accent-red)'
+                  }} />
+                )}
                 <span className={styles.dateDay}>{dayName}</span>
                 <span className={styles.dateNum}>{dayNum}</span>
+                <span style={{ fontSize: '0.55rem', fontWeight: 700, opacity: 0.7 }}>{monthShort}</span>
               </div>
             );
           })}
         </div>
 
-        {/* Matches List */}
-        <div className={styles.matchList}>
-          {filteredMatches.length === 0 ? (
+        {/* Matches List — grouped by date */}
+        <div className={styles.matchList} ref={matchListRef}>
+          {sortedDates.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-secondary)' }}>
               No fixtures scheduled for this filter.
             </div>
           ) : (
-            filteredMatches.map(m => {
-              const isActive = activeMatch?.id === m.id;
-              const isLive = m.status === 'live';
-              const isCompleted = m.status === 'completed';
-              
-              return (
-                <div 
-                  key={m.id} 
-                  className={`${styles.matchCard} ${isActive ? styles.matchCardActive : ''}`}
-                  onClick={() => handleMatchSelect(m.id)}
-                >
-                  <div className={styles.matchCardHeader}>
-                    <span>{m.stage} {m.group ? `• Group ${m.group}` : ''}</span>
-                    {isLive ? (
-                      <span style={{ color: 'var(--accent-red)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <span className="status-live"></span> LIVE ({m.minute}')
-                      </span>
-                    ) : isCompleted ? (
-                      <span style={{ fontWeight: 700 }}>FT</span>
-                    ) : (
-                      <span>{m.time}</span>
-                    )}
-                  </div>
-
-                  <div className={styles.matchTeamsRow}>
-                    <div className={styles.matchTeamLine}>
-                      <div className={styles.teamNameGroup}>
-                        <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} />
-                        <span style={{ fontWeight: isActive ? 700 : 500 }}>{m.homeTeamName}</span>
-                        {followedTeams.includes(m.homeTeamId) && <span style={{ fontSize: '0.65rem', color: 'var(--accent-gold)' }}>★</span>}
-                      </div>
-                      {(isLive || isCompleted) && (
-                        <span className={styles.teamScore}>{m.homeScore}</span>
-                      )}
-                    </div>
-
-                    <div className={styles.matchTeamLine}>
-                      <div className={styles.teamNameGroup}>
-                        <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} />
-                        <span style={{ fontWeight: isActive ? 700 : 500 }}>{m.awayTeamName}</span>
-                        {followedTeams.includes(m.awayTeamId) && <span style={{ fontSize: '0.65rem', color: 'var(--accent-gold)' }}>★</span>}
-                      </div>
-                      {(isLive || isCompleted) && (
-                        <span className={styles.teamScore}>{m.awayScore}</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.65rem', color: 'var(--text-muted)', borderTop: '1px solid var(--glass-border)', paddingTop: '0.5rem', marginTop: '0.5rem' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <MapPin size={10} /> {m.stadiumName.split(' ')[0]}
-                    </span>
-                    <span>{m.date}</span>
-                  </div>
+            sortedDates.map(date => (
+              <div key={date}>
+                {/* Date section header */}
+                <div className={styles.dateSectionHeader}>
+                  <Calendar size={12} />
+                  <span>{formatDateHeader(date)}</span>
+                  <span className={styles.dateSectionCount}>{groupedByDate[date].length} match{groupedByDate[date].length !== 1 ? 'es' : ''}</span>
                 </div>
-              );
-            })
+
+                {/* Matches for this date */}
+                {groupedByDate[date].map(m => {
+                  const isActive = activeMatch?.id === m.id;
+                  const isLive = m.status === 'live';
+                  const isCompleted = m.status === 'completed';
+                  
+                  return (
+                    <div 
+                      key={m.id} 
+                      className={`${styles.matchCard} ${isActive ? styles.matchCardActive : ''}`}
+                      onClick={() => handleMatchSelect(m.id)}
+                    >
+                      <div className={styles.matchCardHeader}>
+                        <span>{m.stage}{m.group ? ` • Group ${m.group}` : ''}</span>
+                        {isLive ? (
+                          <span style={{ color: 'var(--accent-red)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span className="status-live"></span> LIVE
+                          </span>
+                        ) : isCompleted ? (
+                          <span style={{ fontWeight: 700, color: 'var(--accent-green)' }}>FT</span>
+                        ) : (
+                          <span style={{ color: 'var(--text-muted)' }}>{m.time}</span>
+                        )}
+                      </div>
+
+                      <div className={styles.matchTeamsRow}>
+                        <div className={styles.matchTeamLine}>
+                          <div className={styles.teamNameGroup}>
+                            <TeamFlag flag={m.homeTeamFlag} name={m.homeTeamName} size={22} />
+                            <span style={{ fontWeight: isActive ? 700 : 500, fontSize: '0.9rem' }}>{m.homeTeamName}</span>
+                            {followedTeams.includes(m.homeTeamId) && <span style={{ fontSize: '0.6rem', color: 'var(--accent-gold)' }}>★</span>}
+                          </div>
+                          {(isLive || isCompleted) && (
+                            <span className={`${styles.teamScore} ${isActive ? styles.teamScoreActive : ''}`}>{m.homeScore}</span>
+                          )}
+                        </div>
+
+                        <div className={styles.matchTeamLine}>
+                          <div className={styles.teamNameGroup}>
+                            <TeamFlag flag={m.awayTeamFlag} name={m.awayTeamName} size={22} />
+                            <span style={{ fontWeight: isActive ? 700 : 500, fontSize: '0.9rem' }}>{m.awayTeamName}</span>
+                            {followedTeams.includes(m.awayTeamId) && <span style={{ fontSize: '0.6rem', color: 'var(--accent-gold)' }}>★</span>}
+                          </div>
+                          {(isLive || isCompleted) && (
+                            <span className={`${styles.teamScore} ${isActive ? styles.teamScoreActive : ''}`}>{m.awayScore}</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className={styles.matchCardFooter}>
+                        <span><MapPin size={10} /> {m.stadiumName.split(' ').slice(0, 2).join(' ')}</span>
+                        <span style={{ color: isActive ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
+                          {isCompleted ? '✓ Full Time' : isLive ? '🔴 Live' : m.time}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))
           )}
         </div>
       </div>
@@ -264,20 +308,15 @@ function MatchCenterContent() {
 
               <div className={styles.scoreboardLarge}>
                 <div className={styles.largeTeam}>
-                  <TeamFlag flag={activeMatch.homeTeamFlag} name={activeMatch.homeTeamName} className={styles.largeFlag} style={{ fontSize: '2rem' }} />
+                  <TeamFlag flag={activeMatch.homeTeamFlag} name={activeMatch.homeTeamName} size={52} className={styles.largeFlag} />
                   <span className={styles.largeTeamName}>{activeMatch.homeTeamName}</span>
                   <button 
                     onClick={() => handleFollowActiveTeam(activeMatch.homeTeamId)}
                     style={{
-                      background: 'none',
-                      border: 'none',
+                      background: 'none', border: 'none',
                       color: followedTeams.includes(activeMatch.homeTeamId) ? 'var(--accent-gold)' : 'var(--text-muted)',
-                      fontSize: '0.75rem',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '2px',
-                      fontWeight: 600
+                      fontSize: '0.75rem', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: '2px', fontWeight: 600
                     }}
                   >
                     ★ {followedTeams.includes(activeMatch.homeTeamId) ? 'Following' : 'Follow'}
@@ -305,25 +344,21 @@ function MatchCenterContent() {
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>{activeMatch.time}</div>
                       <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '0.25rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Scheduled</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>{activeMatch.date}</div>
                     </div>
                   )}
                 </div>
 
                 <div className={styles.largeTeam}>
-                  <TeamFlag flag={activeMatch.awayTeamFlag} name={activeMatch.awayTeamName} className={styles.largeFlag} style={{ fontSize: '2rem' }} />
+                  <TeamFlag flag={activeMatch.awayTeamFlag} name={activeMatch.awayTeamName} size={52} className={styles.largeFlag} />
                   <span className={styles.largeTeamName}>{activeMatch.awayTeamName}</span>
                   <button 
                     onClick={() => handleFollowActiveTeam(activeMatch.awayTeamId)}
                     style={{
-                      background: 'none',
-                      border: 'none',
+                      background: 'none', border: 'none',
                       color: followedTeams.includes(activeMatch.awayTeamId) ? 'var(--accent-gold)' : 'var(--text-muted)',
-                      fontSize: '0.75rem',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '2px',
-                      fontWeight: 600
+                      fontSize: '0.75rem', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: '2px', fontWeight: 600
                     }}
                   >
                     ★ {followedTeams.includes(activeMatch.awayTeamId) ? 'Following' : 'Follow'}
@@ -358,13 +393,11 @@ function MatchCenterContent() {
                     <span>{activeMatch.stats.shotsOnTarget[1]} ({activeMatch.stats.shots[1]})</span>
                   </div>
                   {(() => {
-                    const totalShots = activeMatch.stats.shots[0] + activeMatch.stats.shots[1] || 1;
-                    const leftWidth = (activeMatch.stats.shots[0] / totalShots) * 100;
-                    const rightWidth = (activeMatch.stats.shots[1] / totalShots) * 100;
+                    const t = activeMatch.stats.shots[0] + activeMatch.stats.shots[1] || 1;
                     return (
                       <div className={styles.statBarContainer}>
-                        <div className={styles.statBarLeft} style={{ width: `${leftWidth}%` }}></div>
-                        <div className={styles.statBarRight} style={{ width: `${rightWidth}%` }}></div>
+                        <div className={styles.statBarLeft} style={{ width: `${(activeMatch.stats.shots[0]/t)*100}%` }}></div>
+                        <div className={styles.statBarRight} style={{ width: `${(activeMatch.stats.shots[1]/t)*100}%` }}></div>
                       </div>
                     );
                   })()}
@@ -378,13 +411,11 @@ function MatchCenterContent() {
                     <span>{activeMatch.stats.corners[1]}</span>
                   </div>
                   {(() => {
-                    const totalCorners = activeMatch.stats.corners[0] + activeMatch.stats.corners[1] || 1;
-                    const leftWidth = (activeMatch.stats.corners[0] / totalCorners) * 100;
-                    const rightWidth = (activeMatch.stats.corners[1] / totalCorners) * 100;
+                    const t = activeMatch.stats.corners[0] + activeMatch.stats.corners[1] || 1;
                     return (
                       <div className={styles.statBarContainer}>
-                        <div className={styles.statBarLeft} style={{ width: `${leftWidth}%` }}></div>
-                        <div className={styles.statBarRight} style={{ width: `${rightWidth}%` }}></div>
+                        <div className={styles.statBarLeft} style={{ width: `${(activeMatch.stats.corners[0]/t)*100}%` }}></div>
+                        <div className={styles.statBarRight} style={{ width: `${(activeMatch.stats.corners[1]/t)*100}%` }}></div>
                       </div>
                     );
                   })()}
@@ -398,13 +429,11 @@ function MatchCenterContent() {
                     <span>{activeMatch.stats.fouls[1]}</span>
                   </div>
                   {(() => {
-                    const totalFouls = activeMatch.stats.fouls[0] + activeMatch.stats.fouls[1] || 1;
-                    const leftWidth = (activeMatch.stats.fouls[0] / totalFouls) * 100;
-                    const rightWidth = (activeMatch.stats.fouls[1] / totalFouls) * 100;
+                    const t = activeMatch.stats.fouls[0] + activeMatch.stats.fouls[1] || 1;
                     return (
                       <div className={styles.statBarContainer}>
-                        <div className={styles.statBarLeft} style={{ width: `${leftWidth}%` }}></div>
-                        <div className={styles.statBarRight} style={{ width: `${rightWidth}%` }}></div>
+                        <div className={styles.statBarLeft} style={{ width: `${(activeMatch.stats.fouls[0]/t)*100}%` }}></div>
+                        <div className={styles.statBarRight} style={{ width: `${(activeMatch.stats.fouls[1]/t)*100}%` }}></div>
                       </div>
                     );
                   })()}
@@ -421,7 +450,7 @@ function MatchCenterContent() {
               </div>
             )}
 
-            {/* Match Timeline Feed (only for live/completed games) */}
+            {/* Match Timeline Feed */}
             {activeMatch.status !== 'upcoming' && activeMatch.timeline && (
               <div>
                 <h3 className={styles.statsSectionTitle}>Live Match Feed Timeline</h3>
@@ -449,7 +478,7 @@ function MatchCenterContent() {
               </div>
             )}
 
-            {/* Fallback info when stats/timeline are not available (e.g. live API feed matches) */}
+            {/* Fallback: no stats/timeline */}
             {activeMatch.status !== 'upcoming' && !activeMatch.stats && !activeMatch.timeline && (
               <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '1.5rem' }}>
                 <Activity size={40} style={{ color: 'var(--accent-gold)' }} />
@@ -460,7 +489,7 @@ function MatchCenterContent() {
               </div>
             )}
 
-            {/* Upcoming Pre-match Card (for upcoming matches) */}
+            {/* Upcoming Pre-match Card */}
             {activeMatch.status === 'upcoming' && (
               <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
                 <Clock size={40} style={{ color: 'var(--accent-gold)' }} />
@@ -469,7 +498,7 @@ function MatchCenterContent() {
                   Lineups and official match rosters will be announced 60 minutes before kickoff. Head over to our Predictor tab to submit your score forecast!
                 </p>
                 <Link href="/fantasy" className="gold-gradient-bg" style={{ padding: '0.6rem 1.2rem', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
-                  Predict & Earn Points
+                  Predict &amp; Earn Points
                 </Link>
               </div>
             )}

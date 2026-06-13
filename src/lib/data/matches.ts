@@ -554,47 +554,50 @@ export interface KnockoutMatchNode {
 }
 
 // Interactive Knockout Bracket Seed Data
+// NOTE: R32 seeds are derived dynamically from live group standings in knockout/page.tsx.
+// This static array provides the bracket structure and seeding labels only.
+// No fake pre-filled results — all slots start as TBD and are populated by live data or simulation.
 export const knockoutNodes: KnockoutMatchNode[] = [
-  // Round of 32
-  { id: "R32_1", round: "R32", label: "Match 1", homeTeam: { id: "usa", name: "United States", flag: "🇺🇸", code: "USA", score: 2 }, awayTeam: { id: "sweden", name: "Sweden", flag: "🇸🇪", code: "SWE", score: 1 }, winnerId: "usa", nextMatchId: "R16_1" },
-  { id: "R32_2", round: "R32", label: "Match 2", homeTeam: { id: "colombia", name: "Colombia", flag: "🇨🇴", code: "COL", score: 1 }, awayTeam: { id: "poland", name: "Poland", flag: "🇵🇱", code: "POL", score: 0 }, winnerId: "colombia", nextMatchId: "R16_1" },
-  { id: "R32_3", round: "R32", label: "Match 3", homeTeam: { id: "argentina", name: "Argentina", flag: "🇦🇷", code: "ARG", score: 3 }, awayTeam: { id: "senegal", name: "Senegal", flag: "🇸🇳", code: "SEN", score: 1 }, winnerId: "argentina", nextMatchId: "R16_2" },
-  { id: "R32_4", round: "R32", label: "Match 4", homeTeam: { id: "denmark", name: "Denmark", flag: "🇩🇰", code: "DEN", score: 1 }, awayTeam: { id: "mexico", name: "Mexico", flag: "🇲🇽", code: "MEX", score: 2 }, winnerId: "mexico", nextMatchId: "R16_2" },
-  { id: "R32_5", round: "R32", label: "Match 5", homeTeam: { id: "brazil", name: "Brazil", flag: "🇧🇷", code: "BRA", score: 2 }, awayTeam: { id: "nigeria", name: "Nigeria", flag: "🇳🇬", code: "NGA", score: 0 }, winnerId: "brazil", nextMatchId: "R16_3" },
-  { id: "R32_6", round: "R32", label: "Match 6", homeTeam: { id: "italy", name: "Italy", flag: "🇮🇹", code: "ITA", score: 1 }, awayTeam: { id: "croatia", name: "Croatia", flag: "🇭🇷", code: "CRO", score: 2 }, winnerId: "croatia", nextMatchId: "R16_3" },
-  { id: "R32_7", round: "R32", label: "Match 7", homeTeam: { id: "france", name: "France", flag: "🇫🇷", code: "FRA", score: 3 }, awayTeam: { id: "ecuador", name: "Ecuador", flag: "🇪🇨", code: "ECU", score: 1 }, winnerId: "france", nextMatchId: "R16_4" },
-  { id: "R32_8", round: "R32", label: "Match 8", homeTeam: { id: "uruguay", name: "Uruguay", flag: "🇺🇾", code: "URU", score: 2 }, awayTeam: { id: "cameroon", name: "Cameroon", flag: "🇨🇲", code: "CMR", score: 1 }, winnerId: "uruguay", nextMatchId: "R16_4" },
-  
-  { id: "R32_9", round: "R32", label: "Match 9", homeTeam: { id: "england", name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", code: "ENG" }, awayTeam: { id: "chile", name: "Chile", flag: "🇨🇱", code: "CHI" }, nextMatchId: "R16_5" },
-  { id: "R32_10", round: "R32", label: "Match 10", homeTeam: { id: "germany", name: "Germany", flag: "🇩🇪", code: "GER" }, awayTeam: { id: "canada", name: "Canada", flag: "🇨🇦", code: "CAN" }, nextMatchId: "R16_5" },
-  { id: "R32_11", round: "R32", label: "Match 11", homeTeam: { id: "spain", name: "Spain", flag: "🇪🇸", code: "ESP" }, awayTeam: { id: "ukraine", name: "Ukraine", flag: "🇺🇦", code: "UKR" }, nextMatchId: "R16_6" },
-  { id: "R32_12", round: "R32", label: "Match 12", homeTeam: { id: "portugal", name: "Portugal", flag: "🇵🇹", code: "POR" }, awayTeam: { id: "morocco", name: "Morocco", flag: "🇲🇦", code: "MAR" }, nextMatchId: "R16_6" },
-  { id: "R32_13", round: "R32", label: "Match 13", homeTeam: { id: "netherlands", name: "Netherlands", flag: "🇳🇱", code: "NED" }, awayTeam: { id: "switzerland", name: "Switzerland", flag: "🇨🇭", code: "SUI" }, nextMatchId: "R16_7" },
-  { id: "R32_14", round: "R32", label: "Match 14", homeTeam: { id: "south-korea", name: "South Korea", flag: "🇰🇷", code: "KOR" }, awayTeam: { id: "japan", name: "Japan", flag: "🇯🇵", code: "JPN" }, nextMatchId: "R16_7" },
-  { id: "R32_15", round: "R32", label: "Match 15", homeTeam: { id: "egypt", name: "Egypt", flag: "🇪🇬", code: "EGY" }, awayTeam: { id: "ivory-coast", name: "Ivory Coast", flag: "🇨🇮", code: "CIV" }, nextMatchId: "R16_8" },
-  { id: "R32_16", round: "R32", label: "Match 16", homeTeam: { id: "australia", name: "Australia", flag: "🇦🇺", code: "AUS" }, awayTeam: { id: "algeria", name: "Algeria", flag: "🇩🇿", code: "ALG" }, nextMatchId: "R16_8" },
+  // Round of 32 — seeding: 1A vs 2B, 1C vs 2D, 1E vs 2F, 1G vs 2H, 1I vs 2J, 1K vs 2L,
+  //                        1B vs 2A, 1D vs 2C, 1F vs 2E, 1H vs 2G, 1J vs 2I, 1L vs 2K
+  // (Official WC 2026 bracket pairing)
+  { id: "R32_1",  round: "R32", label: "M1",  nextMatchId: "R16_1" },
+  { id: "R32_2",  round: "R32", label: "M2",  nextMatchId: "R16_1" },
+  { id: "R32_3",  round: "R32", label: "M3",  nextMatchId: "R16_2" },
+  { id: "R32_4",  round: "R32", label: "M4",  nextMatchId: "R16_2" },
+  { id: "R32_5",  round: "R32", label: "M5",  nextMatchId: "R16_3" },
+  { id: "R32_6",  round: "R32", label: "M6",  nextMatchId: "R16_3" },
+  { id: "R32_7",  round: "R32", label: "M7",  nextMatchId: "R16_4" },
+  { id: "R32_8",  round: "R32", label: "M8",  nextMatchId: "R16_4" },
+  { id: "R32_9",  round: "R32", label: "M9",  nextMatchId: "R16_5" },
+  { id: "R32_10", round: "R32", label: "M10", nextMatchId: "R16_5" },
+  { id: "R32_11", round: "R32", label: "M11", nextMatchId: "R16_6" },
+  { id: "R32_12", round: "R32", label: "M12", nextMatchId: "R16_6" },
+  { id: "R32_13", round: "R32", label: "M13", nextMatchId: "R16_7" },
+  { id: "R32_14", round: "R32", label: "M14", nextMatchId: "R16_7" },
+  { id: "R32_15", round: "R32", label: "M15", nextMatchId: "R16_8" },
+  { id: "R32_16", round: "R32", label: "M16", nextMatchId: "R16_8" },
 
-  // Round of 16
-  { id: "R16_1", round: "R16", label: "R16 - Match 1", homeTeam: { id: "usa", name: "United States", flag: "🇺🇸", code: "USA", score: 2 }, awayTeam: { id: "colombia", name: "Colombia", flag: "🇨🇴", code: "COL", score: 1 }, winnerId: "usa", nextMatchId: "QF_1" },
-  { id: "R16_2", round: "R16", label: "R16 - Match 2", homeTeam: { id: "argentina", name: "Argentina", flag: "🇦🇷", code: "ARG", score: 1 }, awayTeam: { id: "mexico", name: "Mexico", flag: "🇲🇽", code: "MEX", score: 0 }, winnerId: "argentina", nextMatchId: "QF_1" },
-  { id: "R16_3", round: "R16", label: "R16 - Match 3", homeTeam: { id: "brazil", name: "Brazil", flag: "🇧🇷", code: "BRA", score: 2 }, awayTeam: { id: "croatia", name: "Croatia", flag: "🇭🇷", code: "CRO", score: 1 }, winnerId: "brazil", nextMatchId: "QF_2" },
-  { id: "R16_4", round: "R16", label: "R16 - Match 4", homeTeam: { id: "france", name: "France", flag: "🇫🇷", code: "FRA", score: 2 }, awayTeam: { id: "uruguay", name: "Uruguay", flag: "🇺🇾", code: "URU", score: 0 }, winnerId: "france", nextMatchId: "QF_2" },
-  
-  { id: "R16_5", round: "R16", label: "R16 - Match 5", nextMatchId: "QF_3" },
-  { id: "R16_6", round: "R16", label: "R16 - Match 6", nextMatchId: "QF_3" },
-  { id: "R16_7", round: "R16", label: "R16 - Match 7", nextMatchId: "QF_4" },
-  { id: "R16_8", round: "R16", label: "R16 - Match 8", nextMatchId: "QF_4" },
+  // Round of 16 — all TBD until R32 completes
+  { id: "R16_1", round: "R16", label: "R16 - M1", nextMatchId: "QF_1" },
+  { id: "R16_2", round: "R16", label: "R16 - M2", nextMatchId: "QF_1" },
+  { id: "R16_3", round: "R16", label: "R16 - M3", nextMatchId: "QF_2" },
+  { id: "R16_4", round: "R16", label: "R16 - M4", nextMatchId: "QF_2" },
+  { id: "R16_5", round: "R16", label: "R16 - M5", nextMatchId: "QF_3" },
+  { id: "R16_6", round: "R16", label: "R16 - M6", nextMatchId: "QF_3" },
+  { id: "R16_7", round: "R16", label: "R16 - M7", nextMatchId: "QF_4" },
+  { id: "R16_8", round: "R16", label: "R16 - M8", nextMatchId: "QF_4" },
 
-  // Quarter Finals
-  { id: "QF_1", round: "QF", label: "QF 1", homeTeam: { id: "usa", name: "United States", flag: "🇺🇸", code: "USA", score: 1 }, awayTeam: { id: "argentina", name: "Argentina", flag: "🇦🇷", code: "ARG", score: 2 }, winnerId: "argentina", nextMatchId: "SF_1" },
-  { id: "QF_2", round: "QF", label: "QF 2", homeTeam: { id: "brazil", name: "Brazil", flag: "🇧🇷", code: "BRA", score: 1 }, awayTeam: { id: "france", name: "France", flag: "🇫🇷", code: "FRA", score: 2 }, winnerId: "france", nextMatchId: "SF_1" },
+  // Quarter Finals — all TBD
+  { id: "QF_1", round: "QF", label: "QF 1", nextMatchId: "SF_1" },
+  { id: "QF_2", round: "QF", label: "QF 2", nextMatchId: "SF_1" },
   { id: "QF_3", round: "QF", label: "QF 3", nextMatchId: "SF_2" },
   { id: "QF_4", round: "QF", label: "QF 4", nextMatchId: "SF_2" },
 
-  // Semi Finals
-  { id: "SF_1", round: "SF", label: "SF 1", homeTeam: { id: "argentina", name: "Argentina", flag: "🇦🇷", code: "ARG" }, awayTeam: { id: "france", name: "France", flag: "🇫🇷", code: "FRA" }, nextMatchId: "F" },
+  // Semi Finals — all TBD
+  { id: "SF_1", round: "SF", label: "SF 1", nextMatchId: "F" },
   { id: "SF_2", round: "SF", label: "SF 2", nextMatchId: "F" },
 
-  // Final
+  // Grand Final
   { id: "F", round: "F", label: "Grand Final" }
 ];

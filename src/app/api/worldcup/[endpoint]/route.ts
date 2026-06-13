@@ -116,7 +116,7 @@ export async function GET(
     } else if (endpoint === 'groups') {
       const rawStandings = data.standings || [];
       mappedData = rawStandings.map((s: any) => {
-        const groupLetter = s.group ? s.group.replace(/^GROUP_/, '') : '';
+        const groupLetter = s.group ? s.group.replace(/^GROUP_/, '').replace(/^Group\s+/, '').trim() : '';
         return {
           group: groupLetter,
           letter: groupLetter,

@@ -5,11 +5,26 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Users, Search, X, Award, Shield, ChevronRight } from 'lucide-react';
 import styles from './teams.module.css';
 import { teams, Team } from '@/lib/data/teams';
-import { matches } from '@/lib/data/matches';
+import { matches as localMatches } from '@/lib/data/matches';
 import { toggleFollowTeam, getUserState } from '@/app/actions';
-import { useTeams } from '@/hooks/useWorldCupApi';
+import { useTeams, useGroups, useMatches } from '@/hooks/useWorldCupApi';
 import LiveDataBanner from '@/components/LiveDataBanner';
 import TeamFlag from '@/components/TeamFlag';
+
+function getConfedFromCode(code: string): string {
+  const c = code.toUpperCase();
+  const uefa = ['CZE', 'BIH', 'SCO', 'NOR', 'NED', 'GER', 'ESP', 'POR', 'ENG', 'FRA', 'SUI', 'SWE', 'CRO', 'BEL', 'AUT', 'ITA', 'SVK', 'UKR'];
+  const conmebol = ['ARG', 'BRA', 'URU', 'COL', 'ECU', 'PAR', 'CHI', 'PER'];
+  const concacaf = ['USA', 'MEX', 'CAN', 'PAN', 'HAI', 'CUW', 'HON'];
+  const caf = ['RSA', 'SEN', 'MAR', 'GHA', 'CIV', 'ALG', 'CPV', 'COD', 'CMR', 'NGA', 'TUN', 'MLI'];
+  const afc = ['KOR', 'JPN', 'KSA', 'IRN', 'JOR', 'IRQ', 'UZB', 'CHN', 'UAE', 'OMA'];
+  if (uefa.includes(c)) return 'UEFA';
+  if (conmebol.includes(c)) return 'CONMEBOL';
+  if (concacaf.includes(c)) return 'CONCACAF';
+  if (caf.includes(c)) return 'CAF';
+  if (afc.includes(c)) return 'AFC';
+  return 'OFC'; // fallback
+}
 
 function TeamsContent() {
   const searchParams = useSearchParams();
@@ -17,6 +32,83 @@ function TeamsContent() {
 
   // ── Live API data ──────────────────────────────────────────────────────────
   const { data: apiTeams, loading: apiLoading, error: apiError, lastUpdated, refresh } = useTeams({ refreshInterval: 60000 });
+  const { data: apiGroups } = useGroups({ refreshInterval: 60000 });
+  const { data: apiMatches } = useMatches({ refreshInterval: 60000 });
+
+  // Merge apiTeams & apiGroups if available
+  const displayTeams = React.useMemo(() => {
+    if (apiTeams && apiTeams.length > 0) {
+      return apiTeams.map(at => {
+        // Find local team to inherit details
+        const localTeam = teams.find(
+          t => t.name.toLowerCase() === at.name.toLowerCase() || 
+               t.code.toLowerCase() === at.fifa_code?.toLowerCase()
+        );
+        
+        // Find group letter from apiGroups if available
+        let groupLetter = localTeam?.group || 'A';
+        if (apiGroups && apiGroups.length > 0) {
+          const matchingGroup = apiGroups.find(g => 
+            g.standings?.some((item: any) => String(item.team.id) === String(at.id))
+          );
+          if (matchingGroup && matchingGroup.group) {
+            groupLetter = matchingGroup.group;
+          }
+        }
+
+        return {
+          id: String(at.id),
+          name: at.name,
+          code: at.fifa_code || localTeam?.code || '',
+          flag: at.flag || localTeam?.flag || '🏳️',
+          ranking: localTeam ? localTeam.ranking : 50, // default ranking
+          group: groupLetter,
+          confederation: localTeam?.confederation || getConfedFromCode(at.fifa_code || ''),
+          coach: localTeam?.coach || 'TBD Coach',
+          captain: localTeam?.captain || 'TBD Captain',
+          stats: localTeam?.stats || { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
+          form: localTeam?.form || ['W', 'D', 'L'],
+          avgPossession: localTeam?.avgPossession || 50,
+          passAccuracy: localTeam?.passAccuracy || 80,
+        };
+      });
+    }
+    return teams;
+  }, [apiTeams, apiGroups]);
+
+  // Merge live API matches
+  const displayMatches = React.useMemo((): typeof localMatches => {
+    if (!apiMatches || apiMatches.length === 0) return localMatches;
+    return apiMatches.map((m, i): typeof localMatches[number] => {
+      const homeName = m.home_team && typeof m.home_team !== 'string' ? m.home_team.name : String(m.home_team);
+      const awayName = m.away_team && typeof m.away_team !== 'string' ? m.away_team.name : String(m.away_team);
+      const score = m.score || { home: m.home_score, away: m.away_score };
+      const mockFallback = localMatches[i % localMatches.length];
+      
+      const isLive = m.status === 'in_progress' || m.status === 'live';
+      const isCompleted = m.status === 'completed' || m.status === 'finished';
+
+      return {
+        id: String(m.id),
+        stage: (m.stage || mockFallback.stage) as any,
+        group: m.group ? m.group.replace(/^GROUP_/, '') : undefined,
+        homeTeamId: typeof m.home_team === 'string' ? m.home_team : (m.home_team.fifa_code?.toLowerCase() || String(m.home_team.id)),
+        homeTeamName: homeName,
+        homeTeamFlag: (m.home_team && typeof m.home_team !== 'string' ? m.home_team.flag : '') || mockFallback.homeTeamFlag,
+        homeScore: score.home ?? undefined,
+        awayTeamId: typeof m.away_team === 'string' ? m.away_team : (m.away_team.fifa_code?.toLowerCase() || String(m.away_team.id)),
+        awayTeamName: awayName,
+        awayTeamFlag: (m.away_team && typeof m.away_team !== 'string' ? m.away_team.flag : '') || mockFallback.awayTeamFlag,
+        awayScore: score.away ?? undefined,
+        status: (isLive ? 'live' : isCompleted ? 'completed' : 'upcoming') as any,
+        date: m.date || mockFallback.date,
+        time: m.time || mockFallback.time,
+        stadiumId: mockFallback.stadiumId,
+        stadiumName: m.stadium || mockFallback.stadiumName,
+        minute: mockFallback.minute,
+      };
+    });
+  }, [apiMatches]);
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,18 +129,18 @@ function TeamsContent() {
   useEffect(() => {
     const teamId = searchParams.get('id');
     if (teamId) {
-      const team = teams.find(t => t.id === teamId);
+      const team = displayTeams.find(t => t.id === teamId);
       if (team) {
         setSelectedTeam(team);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, displayTeams]);
 
   // Confederation list
   const confeds = ['All', 'UEFA', 'CONMEBOL', 'CONCACAF', 'CAF', 'AFC'];
 
   // Filtering Logic
-  const filteredTeams = teams.filter(t => {
+  const filteredTeams = displayTeams.filter(t => {
     const matchesSearch = t.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           t.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           t.coach.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -81,7 +173,7 @@ function TeamsContent() {
 
   // Find fixtures for selected team
   const getTeamFixtures = (teamId: string) => {
-    return matches.filter(m => m.homeTeamId === teamId || m.awayTeamId === teamId);
+    return displayMatches.filter(m => m.homeTeamId === teamId || m.awayTeamId === teamId);
   };
 
   return (
@@ -143,7 +235,7 @@ function TeamsContent() {
           return (
             <div key={t.id} className={`${styles.card} glass-card`} onClick={() => handleOpenTeamModal(t)}>
               <div className={styles.cardTop}>
-                <TeamFlag flag={t.flag} name={t.name} className={styles.flag} />
+                <TeamFlag flag={t.flag} name={t.name} size={36} className={styles.flag} />
                 <span className={styles.rankingBadge}>Rank #{t.ranking}</span>
               </div>
               <div>
@@ -179,7 +271,7 @@ function TeamsContent() {
             </button>
 
             <div className={styles.modalHeader}>
-              <TeamFlag flag={selectedTeam.flag} name={selectedTeam.name} className={styles.modalFlag} style={{ fontSize: '2rem' }} />
+              <TeamFlag flag={selectedTeam.flag} name={selectedTeam.name} size={60} className={styles.modalFlag} />
               <div>
                 <h2 className={styles.modalInfoTitle}>{selectedTeam.name}</h2>
                 <div className={styles.confed} style={{ fontSize: '0.85rem' }}>{selectedTeam.confederation} • Group {selectedTeam.group}</div>

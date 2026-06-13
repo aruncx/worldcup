@@ -197,7 +197,7 @@ export default function Standings() {
                         </td>
                         <td className={styles.td}>
                           <div className={styles.teamCol}>
-                            <TeamFlag flag={team.flag} name={team.name} style={{ fontSize: '1.2rem' }} />
+                            <TeamFlag flag={team.flag} name={team.name} size={26} />
                             <span className={styles.bold}>{team.name}</span>
                             <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>#{team.ranking}</span>
                           </div>
