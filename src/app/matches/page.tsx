@@ -64,7 +64,7 @@ function MatchCenterContent() {
         stadiumName: m.venue ?? m.stadium ?? mockFallback.stadiumName,
         stats: mockFallback.stats,
         timeline: mockFallback.timeline,
-        minute: isLive ? 67 : undefined,
+        minute: isLive ? Number(m.minute ?? 67) : undefined,
       };
     });
   };
