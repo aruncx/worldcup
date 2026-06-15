@@ -133,7 +133,11 @@ function MatchCenterContent() {
   const sortedDates = Object.keys(groupedByDate).sort();
 
   // Selected Match State
-  const defaultSelectedMatch = matches.find(m => m.status === 'live') || filteredMatches[0] || matches[0];
+  const defaultSelectedMatch = 
+    filteredMatches.find(m => m.status === 'live') || 
+    [...filteredMatches].reverse().find(m => m.status === 'completed') || 
+    filteredMatches[0] || 
+    matches[0];
   const activeMatch = matches.find(m => m.id === selectedIdFromUrl) || defaultSelectedMatch;
 
   // Handle Match Click
