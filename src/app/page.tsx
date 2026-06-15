@@ -204,8 +204,8 @@ function MatchCountdown({ targetDate, status }: CountdownProps) {
       if (status === 'upcoming') {
         diff = targetDate.getTime() - now.getTime();
       } else {
-        // Live match countdown to full time (approx 105 mins from start)
-        const endTime = new Date(targetDate.getTime() + 105 * 60 * 1000);
+        // Live match countdown to full time (90 mins + 15 min HT + 6 mins hydration breaks = 111 mins)
+        const endTime = new Date(targetDate.getTime() + 111 * 60 * 1000);
         diff = endTime.getTime() - now.getTime();
       }
 
