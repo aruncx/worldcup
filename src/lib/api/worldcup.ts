@@ -213,7 +213,7 @@ export function formatLocalTime(dateStr: string | undefined, timeStr: string | u
   }
 }
 
-export function getLiveMinute(dateStr: string | undefined, timeStr: string | undefined): number {
+export function getLiveMinute(dateStr: string | undefined, timeStr: string | undefined, stage?: string): number {
   if (!dateStr || !timeStr) return 45;
   try {
     const kickoffTime = new Date(`${dateStr}T${timeStr}:00Z`).getTime();
@@ -234,7 +234,11 @@ export function getLiveMinute(dateStr: string | undefined, timeStr: string | und
     if (elapsedMins > 75 && elapsedMins <= 78) return 75;
     if (elapsedMins > 78) elapsedMins -= 3;
     
-    return Math.min(120, elapsedMins);
+    // Cap Group Stage matches at 90' if the API is delayed in marking it 'completed'
+    const isGroupStage = !stage || stage.toLowerCase().includes('group');
+    const maxMins = isGroupStage ? 90 : 120;
+    
+    return Math.min(maxMins, elapsedMins);
   } catch {
     return 45;
   }

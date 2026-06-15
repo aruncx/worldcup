@@ -104,6 +104,7 @@ export async function GET(
           home_score: m.score?.fullTime?.home ?? null,
           away_score: m.score?.fullTime?.away ?? null,
           status: status,
+          minute: m.minute,
           datetime: m.utcDate,
           date: m.utcDate ? m.utcDate.split('T')[0] : undefined,
           time: m.utcDate ? m.utcDate.split('T')[1]?.substring(0, 5) : undefined,

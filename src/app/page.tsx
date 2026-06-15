@@ -36,7 +36,7 @@ export default function Home() {
       status: isLive ? 'live' as const : isCompleted ? 'completed' as const : 'upcoming' as const,
       time: formatLocalTime(rawDate, rawTime),
       kickoffTime: new Date(`${rawDate}T${rawTime}:00Z`),
-      minute: isLive ? ((m as any).minute || getLiveMinute(rawDate, rawTime)) : undefined,
+      minute: isLive ? ((m as any).minute || getLiveMinute(rawDate, rawTime, m.stage)) : undefined,
     };
   }) : mockMatches.map(m => ({
     ...m,

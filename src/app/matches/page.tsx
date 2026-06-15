@@ -60,7 +60,7 @@ function MatchCenterContent() {
         homeScore: score.home ?? undefined,
         awayScore: score.away ?? undefined,
         status: isLive ? 'live' : isCompleted ? 'completed' : 'upcoming',
-        minute: isLive ? ((m as any).minute || getLiveMinute(rawDate, rawTime)) : undefined,
+        minute: isLive ? ((m as any).minute || getLiveMinute(rawDate, rawTime, m.stage)) : undefined,
         date: rawDate,
         time: formatLocalTime(m.date || mockFallback.date, m.time || mockFallback.time),
         stadiumId: mockFallback.stadiumId,
