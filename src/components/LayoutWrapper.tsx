@@ -96,7 +96,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
       {/* Top Sticky Navigation */}
       <nav className={styles.navbar}>
         <Link href="/" className={styles.brand}>
-          <div className={styles.logoIcon}>26</div>
+          <img src="/icon.png" alt="World Cup 26" style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }} />
           <div className={styles.brandText}>
             WORLD CUP
           </div>
@@ -148,7 +148,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
       <div className={`${styles.mobileNav} ${mobileMenuOpen ? styles.mobileNavOpen : ''}`}>
         <div className={styles.mobileNavHeader}>
           <Link href="/" className={styles.brand} onClick={() => setMobileMenuOpen(false)}>
-            <div className={styles.logoIcon}>26</div>
+            <img src="/icon.png" alt="World Cup 26" style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }} />
             <div className={styles.brandText}>WORLD CUP</div>
           </Link>
           <button className={styles.mobileNavCloseBtn} onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
