@@ -230,6 +230,11 @@ function MatchCountdown({ targetDate, status }: CountdownProps) {
 
   return (
     <div className={styles.countdownContainer}>
+      {status === 'upcoming' && (
+        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+          Match starts in
+        </div>
+      )}
       <div className={styles.countdownTime}>
         <div className={styles.countdownBox}>
           <span className={styles.countdownNum}>{pad(timeLeft.hours)}</span>

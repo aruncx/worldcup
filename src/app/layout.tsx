@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
@@ -13,6 +14,9 @@ export const metadata: Metadata = {
     description: "Experience the FIFA World Cup 2026 with real-time match tracking, visual team analytics, player profiles, and live interactive tournament brackets.",
     type: "website",
     locale: "en_US",
+  },
+  verification: {
+    google: "Hl1G1R66J_DsaQzUZAbvL7QP29hYVeh4N2TsKoBI6Vk",
   }
 };
 
@@ -23,6 +27,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-DL7NX54GK1"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-DL7NX54GK1');
+          `}
+        </Script>
+      </head>
       <body>
         <LayoutWrapper>
           {children}
