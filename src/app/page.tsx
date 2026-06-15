@@ -231,8 +231,13 @@ function MatchCountdown({ targetDate, status }: CountdownProps) {
   return (
     <div className={styles.countdownContainer}>
       {status === 'upcoming' && (
-        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+        <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.75rem', textAlign: 'center' }}>
           Match starts in
+        </div>
+      )}
+      {status === 'live' && (
+        <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.75rem', textAlign: 'center' }}>
+          Remaining Time
         </div>
       )}
       <div className={styles.countdownTime}>
