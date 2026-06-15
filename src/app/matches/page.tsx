@@ -16,7 +16,7 @@ import { matches as mockMatches, Match, MatchEvent } from '@/lib/data/matches';
 import { stadiums } from '@/lib/data/stadiums';
 import { toggleFollowTeam, getUserState } from '@/app/actions';
 import { useMatches } from '@/hooks/useWorldCupApi';
-import { getTeamName, getMatchScore, getMatchStage, getTeamFlag, formatLocalTime } from '@/lib/api/worldcup';
+import { getTeamName, getMatchScore, getMatchStage, getTeamFlag, formatLocalTime, getLiveMinute } from '@/lib/api/worldcup';
 import LiveDataBanner from '@/components/LiveDataBanner';
 import TeamFlag from '@/components/TeamFlag';
 
@@ -44,6 +44,8 @@ function MatchCenterContent() {
       
       const isLive = m.status === 'in_progress' || m.status === 'live';
       const isCompleted = m.status === 'completed' || m.status === 'finished';
+      const rawDate = m.datetime ? m.datetime.split('T')[0] : (m.date ?? mockFallback.date);
+      const rawTime = m.time || mockFallback.time;
 
       return {
         id: String(m.id),
@@ -58,8 +60,8 @@ function MatchCenterContent() {
         homeScore: score.home ?? undefined,
         awayScore: score.away ?? undefined,
         status: isLive ? 'live' : isCompleted ? 'completed' : 'upcoming',
-        minute: isLive ? ((m as any).minute || mockFallback.minute || 45) : undefined,
-        date: m.datetime ? m.datetime.split('T')[0] : (m.date ?? mockFallback.date),
+        minute: isLive ? ((m as any).minute || getLiveMinute(rawDate, rawTime)) : undefined,
+        date: rawDate,
         time: formatLocalTime(m.date || mockFallback.date, m.time || mockFallback.time),
         stadiumId: mockFallback.stadiumId,
         stadiumName: m.venue ?? m.stadium ?? mockFallback.stadiumName,
@@ -395,139 +397,14 @@ function MatchCenterContent() {
               </div>
             </div>
 
-            {/* Live Stats Board (only for live/completed games) */}
-            {activeMatch.status !== 'upcoming' && activeMatch.stats && (
-              <div>
-                <h3 className={styles.statsSectionTitle}>Team Performance Matrix</h3>
-                
-                {/* Possession */}
-                <div className={styles.statRow}>
-                  <div className={styles.statLabels}>
-                    <span>{activeMatch.stats.possession[0]}%</span>
-                    <span>Ball Possession</span>
-                    <span>{activeMatch.stats.possession[1]}%</span>
-                  </div>
-                  <div className={styles.statBarContainer}>
-                    <div className={styles.statBarLeft} style={{ width: `${activeMatch.stats.possession[0]}%` }}></div>
-                    <div className={styles.statBarRight} style={{ width: `${activeMatch.stats.possession[1]}%` }}></div>
-                  </div>
-                </div>
-
-                {/* Shots on Target */}
-                <div className={styles.statRow}>
-                  <div className={styles.statLabels}>
-                    <span>{activeMatch.stats.shotsOnTarget[0]} ({activeMatch.stats.shots[0]})</span>
-                    <span>Shots on Target (Total)</span>
-                    <span>{activeMatch.stats.shotsOnTarget[1]} ({activeMatch.stats.shots[1]})</span>
-                  </div>
-                  {(() => {
-                    const t = activeMatch.stats.shots[0] + activeMatch.stats.shots[1] || 1;
-                    return (
-                      <div className={styles.statBarContainer}>
-                        <div className={styles.statBarLeft} style={{ width: `${(activeMatch.stats.shots[0]/t)*100}%` }}></div>
-                        <div className={styles.statBarRight} style={{ width: `${(activeMatch.stats.shots[1]/t)*100}%` }}></div>
-                      </div>
-                    );
-                  })()}
-                </div>
-
-                {/* Corners */}
-                <div className={styles.statRow}>
-                  <div className={styles.statLabels}>
-                    <span>{activeMatch.stats.corners[0]}</span>
-                    <span>Corner Kicks</span>
-                    <span>{activeMatch.stats.corners[1]}</span>
-                  </div>
-                  {(() => {
-                    const t = activeMatch.stats.corners[0] + activeMatch.stats.corners[1] || 1;
-                    return (
-                      <div className={styles.statBarContainer}>
-                        <div className={styles.statBarLeft} style={{ width: `${(activeMatch.stats.corners[0]/t)*100}%` }}></div>
-                        <div className={styles.statBarRight} style={{ width: `${(activeMatch.stats.corners[1]/t)*100}%` }}></div>
-                      </div>
-                    );
-                  })()}
-                </div>
-
-                {/* Fouls */}
-                <div className={styles.statRow}>
-                  <div className={styles.statLabels}>
-                    <span>{activeMatch.stats.fouls[0]}</span>
-                    <span>Fouls Committed</span>
-                    <span>{activeMatch.stats.fouls[1]}</span>
-                  </div>
-                  {(() => {
-                    const t = activeMatch.stats.fouls[0] + activeMatch.stats.fouls[1] || 1;
-                    return (
-                      <div className={styles.statBarContainer}>
-                        <div className={styles.statBarLeft} style={{ width: `${(activeMatch.stats.fouls[0]/t)*100}%` }}></div>
-                        <div className={styles.statBarRight} style={{ width: `${(activeMatch.stats.fouls[1]/t)*100}%` }}></div>
-                      </div>
-                    );
-                  })()}
-                </div>
-
-                {/* Cards */}
-                <div className={styles.statRow}>
-                  <div className={styles.statLabels}>
-                    <span style={{ color: 'var(--accent-gold)' }}>🟨 {activeMatch.stats.yellowCards[0]}  🟥 {activeMatch.stats.redCards[0]}</span>
-                    <span>Cards (Yellow / Red)</span>
-                    <span style={{ color: 'var(--accent-gold)' }}>🟨 {activeMatch.stats.yellowCards[1]}  🟥 {activeMatch.stats.redCards[1]}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Match Timeline Feed */}
-            {activeMatch.status !== 'upcoming' && activeMatch.timeline && (
-              <div>
-                <h3 className={styles.statsSectionTitle}>Live Match Feed Timeline</h3>
-                <div className={styles.timelineList}>
-                  {activeMatch.timeline.map((event, idx) => (
-                    <div key={idx} className={styles.timelineNode}>
-                      <span className={styles.timelineMarker}></span>
-                      <div className={styles.timelineDetails}>
-                        <span className={styles.timelineMinute}>{event.minute}'</span>
-                        <span style={{ marginRight: '6px' }}>{getEventEmoji(event.type)}</span>
-                        <span className={styles.timelineText}>{event.detail}</span>
-                      </div>
-                    </div>
-                  ))}
-                  {activeMatch.status === 'live' && (
-                    <div className={styles.timelineNode}>
-                      <span className="status-live" style={{ position: 'absolute', left: '-18px', top: '4px' }}></span>
-                      <div className={styles.timelineDetails}>
-                        <span className={styles.timelineMinute} style={{ color: 'var(--accent-red)' }}>LIVE</span>
-                        <span className={styles.timelineText} style={{ color: 'var(--accent-red)', fontWeight: 700 }}>Match is in play...</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Fallback: no stats/timeline */}
-            {activeMatch.status !== 'upcoming' && !activeMatch.stats && !activeMatch.timeline && (
-              <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '1.5rem' }}>
-                <Activity size={40} style={{ color: 'var(--accent-gold)' }} />
-                <h4 style={{ fontWeight: 700 }}>Match Analytics Log</h4>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', maxWidth: '320px', lineHeight: 1.4 }}>
-                  Detailed game statistics and timeline logs are currently unavailable for this match.
-                </p>
-              </div>
-            )}
-
             {/* Upcoming Pre-match Card */}
             {activeMatch.status === 'upcoming' && (
               <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
                 <Clock size={40} style={{ color: 'var(--accent-gold)' }} />
-                <h4 style={{ fontWeight: 700 }}>Pre-Match Prediction Model</h4>
+                <h4 style={{ fontWeight: 700 }}>Upcoming Match</h4>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', maxWidth: '300px', lineHeight: 1.4 }}>
-                  Lineups and official match rosters will be announced 60 minutes before kickoff. Head over to our Predictor tab to submit your score forecast!
+                  Lineups and official match rosters will be announced 60 minutes before kickoff.
                 </p>
-                <Link href="/fantasy" className="gold-gradient-bg" style={{ padding: '0.6rem 1.2rem', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
-                  Predict &amp; Earn Points
-                </Link>
               </div>
             )}
           </>

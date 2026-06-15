@@ -212,3 +212,25 @@ export function formatLocalTime(dateStr: string | undefined, timeStr: string | u
     return timeStr;
   }
 }
+
+export function getLiveMinute(dateStr: string | undefined, timeStr: string | undefined): number {
+  if (!dateStr || !timeStr) return 45;
+  try {
+    const kickoffTime = new Date(`${dateStr}T${timeStr}:00Z`).getTime();
+    const now = Date.now();
+    let elapsedMins = Math.floor((now - kickoffTime) / 60000);
+    
+    if (elapsedMins <= 0) return 1;
+    
+    // Approximate halftime (15 mins) after 45 mins
+    if (elapsedMins > 45 && elapsedMins <= 60) {
+      return 45; // Half Time
+    } else if (elapsedMins > 60) {
+      elapsedMins -= 15;
+    }
+    
+    return Math.min(120, elapsedMins);
+  } catch {
+    return 45;
+  }
+}

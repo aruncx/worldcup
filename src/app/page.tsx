@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import styles from './page.module.css';
 import { matches as mockMatches } from '@/lib/data/matches';
 import { useMatches } from '@/hooks/useWorldCupApi';
-import { getTeamName, getMatchScore, getTeamFlag, formatLocalTime } from '@/lib/api/worldcup';
+import { getTeamName, getMatchScore, getTeamFlag, formatLocalTime, getLiveMinute } from '@/lib/api/worldcup';
 import TeamFlag from '@/components/TeamFlag';
 
 export default function Home() {
@@ -36,7 +36,7 @@ export default function Home() {
       status: isLive ? 'live' as const : isCompleted ? 'completed' as const : 'upcoming' as const,
       time: formatLocalTime(rawDate, rawTime),
       kickoffTime: new Date(`${rawDate}T${rawTime}:00Z`),
-      minute: isLive ? ((m as any).minute || mock.minute || 45) : undefined,
+      minute: isLive ? ((m as any).minute || getLiveMinute(rawDate, rawTime)) : undefined,
     };
   }) : mockMatches.map(m => ({
     ...m,
@@ -60,6 +60,15 @@ export default function Home() {
       <div className={styles.floodlight}></div>
       <div className={styles.heroOverlay}></div>
 
+      {/* Decorative Floating Flags */}
+      <div className={styles.flagCloud} aria-hidden="true">
+        <span className={styles.cloudSpan} style={{ '--x': '8%', '--y': '22%', '--d': '0s' } as React.CSSProperties}>ARG</span>
+        <span className={styles.cloudSpan} style={{ '--x': '58%', '--y': '16%', '--d': '0.6s' } as React.CSSProperties}>USA</span>
+        <span className={styles.cloudSpan} style={{ '--x': '72%', '--y': '66%', '--d': '2.5s' } as React.CSSProperties}>FRA</span>
+        <span className={styles.cloudSpan} style={{ '--x': '86%', '--y': '30%', '--d': '1.1s' } as React.CSSProperties}>JPN</span>
+        <span className={styles.cloudSpan} style={{ '--x': '42%', '--y': '80%', '--d': '3s' } as React.CSSProperties}>MEX</span>
+      </div>
+
       <motion.div 
         className={styles.heroContent}
         initial={{ opacity: 0, y: 30 }}
@@ -75,30 +84,6 @@ export default function Home() {
         <p className={styles.heroSubtitle}>
           Follow every match, player, team, and statistic from the biggest football tournament on Earth. Experience live scores, immersive analytics, and more.
         </p>
-
-        <div className={styles.heroStats}>
-          <div className={styles.statItem}>
-            <span className={styles.statValue}>48</span>
-            <span className={styles.statLabel}>Nations</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statValue}>104</span>
-            <span className={styles.statLabel}>Matches</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statValue}>16</span>
-            <span className={styles.statLabel}>Host Cities</span>
-          </div>
-        </div>
-
-        <div className={styles.heroButtons}>
-          <Link href="/matches?date=today">
-            <button className={styles.primaryBtn}>Watch Live Scores</button>
-          </Link>
-          <Link href="/standings">
-            <button className={styles.secondaryBtn}>Explore Matches</button>
-          </Link>
-        </div>
 
         {/* Live Match Widget */}
         <div className={styles.matchWidget}>
@@ -173,6 +158,30 @@ export default function Home() {
               );
             })}
           </div>
+        </div>
+
+        <div className={styles.heroStats}>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>48</span>
+            <span className={styles.statLabel}>Nations</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>104</span>
+            <span className={styles.statLabel}>Matches</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>16</span>
+            <span className={styles.statLabel}>Host Cities</span>
+          </div>
+        </div>
+
+        <div className={styles.heroButtons}>
+          <Link href="/matches?date=today">
+            <button className={styles.primaryBtn}>Watch Live Scores</button>
+          </Link>
+          <Link href="/standings">
+            <button className={styles.secondaryBtn}>Explore Matches</button>
+          </Link>
         </div>
       </motion.div>
     </div>

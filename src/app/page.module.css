@@ -370,3 +370,33 @@
   margin-top: -12px;
 }
 
+/* Flag Cloud Decoration */
+.flagCloud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cloudSpan {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.15);
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  animation: floatCloud 8s ease-in-out infinite;
+  animation-delay: var(--d);
+  letter-spacing: 0.1em;
+  user-select: none;
+}
+
+@keyframes floatCloud {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-30px) scale(1.05); }
+}
+
