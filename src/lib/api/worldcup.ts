@@ -222,12 +222,17 @@ export function getLiveMinute(dateStr: string | undefined, timeStr: string | und
     
     if (elapsedMins <= 0) return 1;
     
-    // Approximate halftime (15 mins) after 45 mins
-    if (elapsedMins > 45 && elapsedMins <= 60) {
-      return 45; // Half Time
-    } else if (elapsedMins > 60) {
-      elapsedMins -= 15;
-    }
+    // 1st Half Hydration Break (3 mins) at 30 mins
+    if (elapsedMins > 30 && elapsedMins <= 33) return 30;
+    if (elapsedMins > 33) elapsedMins -= 3;
+    
+    // Half Time (15 mins) at 45 mins
+    if (elapsedMins > 45 && elapsedMins <= 60) return 45;
+    if (elapsedMins > 60) elapsedMins -= 15;
+
+    // 2nd Half Hydration Break (3 mins) at 75 mins
+    if (elapsedMins > 75 && elapsedMins <= 78) return 75;
+    if (elapsedMins > 78) elapsedMins -= 3;
     
     return Math.min(120, elapsedMins);
   } catch {
