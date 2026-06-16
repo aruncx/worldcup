@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Live scores, standings, and analytics for the FIFA World Cup 2026.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#020617',
+    background_color: '#ffffff',
     theme_color: '#020617',
     icons: [
       {
@@ -19,7 +19,7 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/icon-512x512.png',
         sizes: '512x512',
         type: 'image/png',
-        purpose: 'maskable',
+        purpose: 'any',
       },
     ],
   };
