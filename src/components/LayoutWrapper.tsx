@@ -58,8 +58,10 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <div className={styles.container}>
-      {/* Live Score Ticker */}
-      <div className={styles.ticker}>
+      {/* Sticky Header Container */}
+      <header className={styles.stickyHeader}>
+        {/* Live Score Ticker */}
+        <div className={styles.ticker}>
         <div className={styles.tickerWrap}>
           {liveMatchesList.map((m, i) => (
             <span key={`live-${i}`} className={styles.tickerItem}>
@@ -143,6 +145,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
           </button>
         </div>
       </nav>
+      </header>
 
       {/* Mobile Nav Overlay */}
       <div className={`${styles.mobileNav} ${mobileMenuOpen ? styles.mobileNavOpen : ''}`}>
