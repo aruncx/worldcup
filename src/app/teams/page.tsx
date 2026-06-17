@@ -70,6 +70,7 @@ function TeamsContent() {
           form: localTeam?.form || ['W', 'D', 'L'],
           avgPossession: localTeam?.avgPossession || 50,
           passAccuracy: localTeam?.passAccuracy || 80,
+          squad: localTeam?.squad,
         };
       });
     }
@@ -338,40 +339,67 @@ function TeamsContent() {
             </div>
 
             {/* Fixtures list */}
-            <h3 style={{ fontFamily: 'Outfit', fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.75rem' }}>Schedule & Results</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {getTeamFixtures(selectedTeam.id).map(m => {
-                const isHome = m.homeTeamId === selectedTeam.id;
-                const opponent = isHome ? m.awayTeamName : m.homeTeamName;
-                const opponentFlag = isHome ? m.awayTeamFlag : m.homeTeamFlag;
-                const isCompleted = m.status === 'completed';
-                const isLive = m.status === 'live';
-                
-                return (
-                  <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '10px', fontSize: '0.8rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ fontWeight: 600 }}>{isHome ? 'VS' : 'AT'}</span>
-                      <TeamFlag flag={opponentFlag} name={opponent} />
-                      <span style={{ fontWeight: 600 }}>{opponent}</span>
-                    </div>
+            {getTeamFixtures(selectedTeam.id).length > 0 && (
+              <>
+                <h3 style={{ fontFamily: 'Outfit', fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.75rem' }}>Schedule & Results</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {getTeamFixtures(selectedTeam.id).map(m => {
+                    const isHome = m.homeTeamId === selectedTeam.id;
+                    const opponent = isHome ? m.awayTeamName : m.homeTeamName;
+                    const opponentFlag = isHome ? m.awayTeamFlag : m.homeTeamFlag;
+                    const isCompleted = m.status === 'completed';
+                    const isLive = m.status === 'live';
+                    
+                    return (
+                      <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '10px', fontSize: '0.8rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ fontWeight: 600 }}>{isHome ? 'VS' : 'AT'}</span>
+                          <TeamFlag flag={opponentFlag} name={opponent} />
+                          <span style={{ fontWeight: 600 }}>{opponent}</span>
+                        </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {isCompleted ? (
-                        <span style={{ background: 'var(--bg-tertiary)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 800 }}>
-                          {m.homeScore} : {m.awayScore} (FT)
-                        </span>
-                      ) : isLive ? (
-                        <span style={{ color: 'var(--accent-red)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <span className="status-live"></span> {m.homeScore} : {m.awayScore} ({m.minute}')
-                        </span>
-                      ) : (
-                        <span>{m.date} • {m.time}</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {isCompleted ? (
+                            <span style={{ background: 'var(--bg-tertiary)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 800 }}>
+                              {m.homeScore} : {m.awayScore} (FT)
+                            </span>
+                          ) : isLive ? (
+                            <span style={{ color: 'var(--accent-red)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <span className="status-live"></span> {m.homeScore} : {m.awayScore} ({m.minute}')
+                            </span>
+                          ) : (
+                            <span>{m.date} • {m.time}</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {/* Squad list */}
+            {selectedTeam.squad && (
+              <>
+                <h3 style={{ fontFamily: 'Outfit', fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.75rem', marginTop: '1.5rem' }}>Squad Roster</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {Object.entries(selectedTeam.squad).map(([pos, players]) => (
+                    players.length > 0 && (
+                      <div key={pos} style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '10px', padding: '1rem' }}>
+                        <h4 style={{ textTransform: 'capitalize', color: 'var(--accent-gold)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>{pos}</h4>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          {players.map(p => (
+                            <span key={p} style={{ background: 'var(--bg-tertiary)', padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-primary)' }}>
+                              {p}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
